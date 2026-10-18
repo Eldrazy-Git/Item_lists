@@ -84,7 +84,7 @@ Chaque stack passe par une chaîne d'**extracteurs** ([`IdentityRegistry`](../sr
 | 1 | nexo | `custom_data → PublicBukkitValues → "nexo:id"` | `nexo:ruby` |
 | 2 | oraxen | `custom_data → PublicBukkitValues → "oraxen:id"` | `oraxen:ruby` |
 | 3 | itemsadder | `custom_data → itemsadder → namespace + id` | `monpack:ruby` |
-| 4 | mythicmobs | `custom_data → PublicBukkitValues → "mythicmobs:type"` (ou l'ancien `MYTHIC_TYPE`) | `mythicmobs:elytreum_sword` |
+| 4 | mythicmobs | `custom_data → PublicBukkitValues → "mythicmobs:type"` (ou l'ancien `MYTHIC_TYPE`) | `mythicmobs:ruby_sword` |
 | 5 | mmoitems | `custom_data → MMOITEMS_ITEM_TYPE + MMOITEMS_ITEM_ID` | `mmoitems:sword/ruby_sword` |
 | 6 | bukkit | toute clé texte `PublicBukkitValues → "<plugin>:id"` | `<plugin>:<valeur>` |
 | 7 | item_model | modèle différent de celui de l'item de base | `monpack:ruby`, ou `minecraft:paper#diamond` pour un modèle vanilla réutilisé |
