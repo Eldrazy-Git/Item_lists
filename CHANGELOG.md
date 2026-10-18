@@ -2,6 +2,26 @@
 
 Toutes les évolutions notables d'Item Lists sont listées ici.
 
+## [1.0.1] - 2026-10-19
+
+Corrections issues de tests sur un vrai serveur (Nexo + MythicMobs).
+
+### Corrigé
+- **Armes, armures et outils MythicMobs / Crucible** : ils sont désormais reconnus par leur vrai identifiant (`mythicmobs:elytreum_sword`…). Avant, le mod se rabattait sur le *custom model data* (`minecraft:netherite_sword#10000`), et deux items différents pouvaient être confondus. Ces items rangent leur type dans `PublicBukkitValues."mythicmobs:type"` ; l'ancien emplacement `MYTHIC_TYPE` reste reconnu.
+- **Catalogue pollué par les menus des plugins** : les boutons de menus (rangs, catégories, « Retour », « Fermer », récompenses quotidiennes…) ne sont plus mémorisés comme items, même quand ce sont des items Nexo.
+- **Compter le conteneur ouvert** : seuls les vrais coffres, barils et shulkers sont comptés, jamais un menu de boutique.
+
+### Modifié
+- **Découverte des items custom** : un item n'est retenu que s'il passe dans l'inventaire ou dans un vrai stockage (coffre, baril, shulker, ender chest, minecart ou bateau à coffre, animal de bât) ouvert d'un clic droit. Seuls les items de plugins d'items (Nexo, Oraxen, ItemsAdder, MythicMobs, MMOItems) sont mémorisés d'office ; les autres le sont quand vous les ajoutez vous-même.
+- **Nettoyage automatique du cache au premier lancement** : les entrées des versions précédentes, d'origine inconnue, sont retirées, sauf celles utilisées dans une liste. Vos vrais items reviennent dans le catalogue dès qu'ils repassent dans votre inventaire.
+
+### Ajouté
+- Réglage **« Découvrir aussi dans les menus »** (désactivé par défaut), pour remplir le catalogue depuis `/nexo inventory`.
+- Touche **`Suppr`** dans le catalogue : oublie l'item custom survolé.
+
+### À faire après la mise à jour
+- Les entrées de liste ajoutées avec un ancien identifiant MythicMobs (`minecraft:…#10000`) ne sont plus comptées : supprimez-les et ajoutez à nouveau ces items.
+
 ## [1.0.0] - 2026-10-18
 
 Première version publique.
@@ -55,4 +75,5 @@ Première version publique.
 - REI ne permet pas de faire glisser les items de sa liste principale. Utilisez la touche `N`, ou passez par les favoris REI.
 - Les clés utilisées pour Nexo, Oraxen et ItemsAdder correspondent aux versions publiques de ces plugins. Vérifiez-les sur votre serveur avec `/itemlists dump`.
 
+[1.0.1]: https://github.com/Eldrazy-Git/Item_lists/releases/tag/v1.0.1
 [1.0.0]: https://github.com/Eldrazy-Git/Item_lists/releases/tag/v1.0.0
