@@ -97,9 +97,10 @@
 	"gui.itemlists.catalog.source.other": "Source : autre",
 	"gui.itemlists.catalog.all_tabs": "Onglet : tous",
 	"gui.itemlists.catalog.empty": "Aucun item. Les items custom apparaissent après avoir été vus en jeu.",
-	"gui.itemlists.catalog.hint": "Clic : +1 pile • Maj+clic : +1 • Clic droit : retirer",
+	"gui.itemlists.catalog.hint": "Clic : +1 pile • Maj+clic : +1 • Clic droit : retirer • Suppr : oublier un item custom",
 	"gui.itemlists.catalog.in_list": "Dans la liste : %s",
 	"gui.itemlists.catalog.added": "%s → %s",
+	"gui.itemlists.catalog.forgotten": "%s retiré du catalogue (il reviendra s'il est ajouté à une liste)",
 	"gui.itemlists.catalog.removed": "%s retiré de la liste",
 
 	"gui.itemlists.add.no_active": "Aucune liste active : ouvrez le menu des listes pour en choisir une.",

@@ -15,4 +15,20 @@ public record ItemIdentity(String id, ItemSource source, String extractor) {
 	public boolean isCustom() {
 		return source != ItemSource.VANILLA;
 	}
+
+	/**
+	 * Identite fournie par un plugin d'items connu (Nexo, Oraxen, ItemsAdder, MythicMobs, MMOItems).
+	 * Les autres (cle Bukkit generique, replis modele / custom model data / nom) attrapent aussi les
+	 * boutons des menus de plugins : ils ne sont pas memorises automatiquement dans le catalogue.
+	 */
+	public boolean isPluginItem() {
+		return isPluginItemId(id, source);
+	}
+
+	public static boolean isPluginItemId(String id, ItemSource source) {
+		if (source == ItemSource.NEXO || source == ItemSource.ORAXEN || source == ItemSource.ITEMSADDER) {
+			return true;
+		}
+		return id.startsWith("mythicmobs:") || id.startsWith("mmoitems:");
+	}
 }

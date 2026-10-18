@@ -185,7 +185,52 @@ public final class CustomItemCache {
 		markDirty();
 	}
 
-	/** Oublie les items du serveur courant (bouton du catalogue). */
+	/** Oublie un item du serveur courant (touche Suppr dans le catalogue). Renvoie false s'il n'y etait pas. */
+	public boolean forget(String id) {
+		String key = currentServerKey();
+		Map<String, Entry> items = key == null ? null : servers.get(key);
+		if (items != null && items.remove(id) != null) {
+			markDirty();
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Retire, sur tous les serveurs, les items qui ne viennent pas d'un plugin d'items (boutons de menus,
+	 * replis custom model data / nom...), sauf ceux que {@code keep} demande de garder (utilises dans une liste).
+	 *
+	 * @return nombre d'entrees retirees
+	 */
+	public int purgeNonPluginItems(java.util.function.Predicate<String> keep) {
+		int removed = 0;
+		for (Map<String, Entry> items : servers.values()) {
+			var iterator = items.values().iterator();
+			while (iterator.hasNext()) {
+				Entry entry = iterator.next();
+				if (!ItemIdentity.isPluginItemId(entry.id, entry.source) && !keep.test(entry.id)) {
+					iterator.remove();
+					removed++;
+				}
+			}
+		}
+		if (removed > 0) {
+			markDirty();
+			save();
+		}
+		return removed;
+	}
+
+	/** Nombre d'items memorises, tous serveurs confondus. */
+	public int size() {
+		int total = 0;
+		for (Map<String, Entry> items : servers.values()) {
+			total += items.size();
+		}
+		return total;
+	}
+
+	/** Oublie les items du serveur courant (bouton des reglages). */
 	public void clearCurrentServer() {
 		String key = currentServerKey();
 		if (key != null && servers.remove(key) != null) {

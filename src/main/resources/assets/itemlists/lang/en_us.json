@@ -97,9 +97,10 @@
 	"gui.itemlists.catalog.source.other": "Source: other",
 	"gui.itemlists.catalog.all_tabs": "Tab: all",
 	"gui.itemlists.catalog.empty": "No items. Custom items show up once they have been seen in game.",
-	"gui.itemlists.catalog.hint": "Click: +1 stack • Shift+click: +1 • Right-click: remove",
+	"gui.itemlists.catalog.hint": "Click: +1 stack • Shift+click: +1 • Right-click: remove • Del: forget a custom item",
 	"gui.itemlists.catalog.in_list": "In list: %s",
 	"gui.itemlists.catalog.added": "%s → %s",
+	"gui.itemlists.catalog.forgotten": "%s removed from the catalog (it comes back if added to a list)",
 	"gui.itemlists.catalog.removed": "%s removed from the list",
 
 	"gui.itemlists.add.no_active": "No active list: open the lists menu to pick one.",

@@ -200,6 +200,16 @@ public final class ListManager {
 		return sorted;
 	}
 
+	/** Vrai si au moins une liste contient cet identifiant d'item. */
+	public boolean usesItem(String itemId) {
+		for (ItemList list : lists.values()) {
+			if (list.find(itemId) != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public ItemList get(String id) {
 		return id == null ? null : lists.get(id);
 	}

@@ -53,6 +53,11 @@ public class ItemListsClient implements ClientModInitializer {
 		syncActiveToConfig();
 		customItems = new CustomItemCache(ModPaths.CUSTOM_ITEMS_CACHE);
 		customItems.load();
+		// Nettoyage des boutons de menus memorises par les versions precedentes (garde ce qui est dans une liste).
+		int purged = customItems.purgeNonPluginItems(lists::usesItem);
+		if (purged > 0) {
+			LOGGER.info("{} item(s) de menus retires du cache des items custom.", purged);
+		}
 
 		ItemListsCommand.register();
 		ModKeyBindings.register();

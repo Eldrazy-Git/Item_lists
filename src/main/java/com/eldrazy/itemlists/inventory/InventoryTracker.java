@@ -23,7 +23,7 @@ import com.eldrazy.itemlists.data.CustomItemCache;
  * + contenu recursif des shulkers / bundles, et en option le conteneur ouvert).
  * <p>
  * A chaque tick on calcule une empreinte tres legere des slots (reference du stack + quantite) ;
- * le comptage complet n'est refait que si elle change. Au passage, chaque item custom croise
+ * le comptage complet n'est refait que si elle change. Au passage, chaque item de plugin d'items croise
  * (y compris dans les menus de plugins) est memorise dans le {@link CustomItemCache}.
  */
 public final class InventoryTracker {
@@ -142,7 +142,9 @@ public final class InventoryTracker {
 	}
 
 	private static void discover(CustomItemCache cache, McCountableItem item) {
-		if (!item.identity().isCustom() || cache.isKnownOnCurrentServer(item.identity().id())) {
+		// Seuls les items de plugins d'items sont memorises d'office : les boutons de menus (rangs, categories...)
+		// n'ont qu'une identite faible et pollueraient le catalogue. Les autres sont memorises si on les ajoute soi-meme.
+		if (!item.identity().isPluginItem() || cache.isKnownOnCurrentServer(item.identity().id())) {
 			return;
 		}
 		ItemStack stack = item.item() instanceof ItemStack s ? s

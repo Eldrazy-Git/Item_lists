@@ -46,6 +46,8 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 	static final String ORAXEN_GEM = "paper[custom_data={PublicBukkitValues:{\"oraxen:id\":\"gem\"}}]";
 	static final String MODEL_ONLY = "paper[item_model=\"minecraft:diamond\"]";
 	static final String ANVIL_RENAMED = "diamond[custom_name=\"Mon diamant\"]";
+	/** Bouton de menu de plugin (ex. rankup) : identite Bukkit generique, ne doit pas polluer le catalogue. */
+	static final String MENU_BUTTON = "lime_dye[custom_data={PublicBukkitValues:{\"menu:id\":\"rang_badge_ok\"}},custom_name={\"text\":\"Niveau requis\",\"italic\":false}]";
 	/** Arme MythicMobs / Crucible telle qu'envoyee par un vrai serveur (type dans PublicBukkitValues). */
 	static final String CRUCIBLE_SWORD = "netherite_sword[custom_data={PublicBukkitValues:{\"mythicmobs:type\":\"elytreum_sword\","
 			+ "\"mythicmobs:prevent_crafting_with\":1b,\"ecoenchants:ecoenchantlore-skip\":0}},custom_model_data={floats:[10000f]}]";
@@ -72,6 +74,7 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 			give(world, "diamond", 10);
 			give(world, SHULKER, 1);
 			give(world, CRUCIBLE_SWORD, 1);
+			give(world, MENU_BUTTON, 1);
 			context.waitTicks(10);
 
 			testIdentities(context);
@@ -107,7 +110,8 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 				"minecraft:diamond/vanilla/vanilla",
 				"minecraft:diamond/vanilla/vanilla",
 				"minecraft:shulker_box/vanilla/vanilla",
-				"mythicmobs:elytreum_sword/autre/mythicmobs"));
+				"mythicmobs:elytreum_sword/autre/mythicmobs",
+				"menu:rang_badge_ok/autre/bukkit"));
 	}
 
 	private static String describe(ItemStack stack) {
@@ -165,6 +169,10 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 		expect(rubies, 9L);
 		boolean cached = context.computeOnClient(mc -> ItemListsClient.getInstance().customItems().isKnownOnCurrentServer("citadelle:etherium_shard"));
 		expect(cached, true);
+		expect(context.computeOnClient(mc -> ItemListsClient.getInstance().customItems().isKnownOnCurrentServer("mythicmobs:elytreum_sword")), true);
+		// Bouton de menu (cle Bukkit generique) et item reconnu par simple modele : comptes, mais pas memorises d'office.
+		expect(context.computeOnClient(mc -> ItemListsClient.getInstance().customItems().isKnownOnCurrentServer("menu:rang_badge_ok")), false);
+		expect(context.computeOnClient(mc -> ItemListsClient.getInstance().customItems().isKnownOnCurrentServer("minecraft:paper#diamond")), false);
 	}
 
 	/**

@@ -269,6 +269,19 @@ public class CatalogScreen extends BaseScreen {
 
 	@Override
 	public boolean keyPressed(KeyEvent event) {
+		// Suppr sur un item custom survole : l'oublier (retire un intrus du catalogue, ex. bouton de menu).
+		if (event.key() == GLFW.GLFW_KEY_DELETE && this.getFocused() != searchBox) {
+			double mx = this.minecraft.mouseHandler.getScaledXPos(this.minecraft.getWindow());
+			double my = this.minecraft.mouseHandler.getScaledYPos(this.minecraft.getWindow());
+			int index = indexAt(mx, my);
+			if (index >= 0 && filtered.get(index).source() != ItemSource.VANILLA) {
+				CatalogData.Entry entry = filtered.get(index);
+				if (ItemListsClient.getInstance().customItems().forget(entry.id())) {
+					showStatus(Component.translatable("gui.itemlists.catalog.forgotten", entry.name()), Theme.COLOR_PARTIAL);
+				}
+				return true;
+			}
+		}
 		if (event.key() == GLFW.GLFW_KEY_PAGE_DOWN) {
 			scrollRow = Math.min(maxScroll(), scrollRow + visibleRows);
 			return true;
