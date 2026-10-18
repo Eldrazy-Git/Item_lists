@@ -34,9 +34,10 @@ Nouveautés de chaque version : [CHANGELOG.md](CHANGELOG.md).
 ![Menu des listes](docs/images/menu-listes-v4.png)
 
 ### Catalogue (« Ajouter… »)
-- Tous les items vanilla + les **items custom découverts** sur le serveur courant.
+- Tous les items vanilla, dont **chaque variante** de potion, potion jetable / persistante et flèche à effet, et **chaque livre enchanté à tous ses niveaux** (Tranchant I à V…, enchantements du serveur compris).
+- Les **items custom découverts** sur le serveur courant (vus dans l'inventaire ou un vrai coffre).
 - Recherche `nom`, `id` ou `@nexo`, filtres par source (vanilla, custom, Nexo, ItemsAdder, Oraxen, autre) et par onglet créatif.
-- Clic : +1 pile · Maj+clic : +1 · clic droit : retirer.
+- Clic : +1 pile · Maj+clic : +1 · clic droit : retirer · `Suppr` : oublier un item custom survolé.
 
 ![Catalogue](docs/images/catalogue-v4.png)
 
@@ -88,7 +89,7 @@ Les items custom sont des items vanilla portant des data components. Des **extra
 | custom_name | nom custom **non italique** (posé par un plugin) | `minecraft:paper#nom_slug` |
 | vanilla | sinon | `minecraft:diamond` |
 
-- Le **comptage** compare ces identités : un rubis Nexo n'est pas compté comme du papier, et un diamant renommé à l'enclume reste un diamant.
+- Le **comptage** compare ces identités : un rubis Nexo n'est pas compté comme du papier, un diamant renommé à l'enclume reste un diamant, et une potion de soin n'est pas comptée comme une potion de poison.
 - Les blocs custom (note blocks, tripwire, champignons…) sont gérés via leur forme item.
 - Le client ne connaît pas le registre des plugins : chaque item de plugin d'items vu dans l'**inventaire** ou un **vrai coffre** est mémorisé, **par adresse de serveur**, dans `config/itemlists/custom_items_cache.json`, avec un exemplaire complet de l'item pour afficher son vrai modèle. Les **icônes des menus de plugins** (Retour, Fermer, récompenses…), même quand ce sont des items Nexo, sont ignorées. Option *Découvrir aussi dans les menus* pour `/nexo inventory`.
 

@@ -2,7 +2,7 @@
 
 Toutes les évolutions notables d'Item Lists sont listées ici.
 
-## [Non publié]
+## [1.1.0] - 2026-10-19
 
 ### Ajouté
 - **Potions, flèches à effet et livres enchantés distingués par leurs composants**, au format de la syntaxe des composants de Minecraft (celle de `/give`) :
@@ -10,6 +10,8 @@ Toutes les évolutions notables d'Item Lists sont listées ici.
   - livres enchantés : `minecraft:enchanted_book[minecraft:sharpness=5]`, plusieurs enchantements triés et séparés par des virgules (composant `stored_enchantments`).
   
   Chaque variante est comptée séparément, a sa propre icône et son nom (« Livre enchanté (Tranchant V) »), et le catalogue propose toutes les variantes : toutes les potions et flèches des onglets créatifs, et **chaque livre enchanté à tous ses niveaux** (Tranchant I à V…), y compris les enchantements ajoutés par le serveur (datapacks, EcoEnchants…).
+
+- Nouveau logo du mod.
 
 ### À faire après la mise à jour
 - Une entrée `minecraft:potion`, `minecraft:tipped_arrow` ou `minecraft:enchanted_book` sans variante ne compte plus que les items sans composant : remplacez-la par la variante voulue depuis le catalogue.
@@ -83,9 +85,10 @@ Première version publique.
 - EMI n'est pas pris en charge : il n'existe pas encore de version EMI pour Minecraft 26.x.
 
 ### Limites connues
-- Pour un item vanilla, l'identité est l'item lui-même : toutes les potions comptent comme `minecraft:potion` *(corrigé depuis : voir « Non publié »)*.
+- Pour un item vanilla, l'identité est l'item lui-même : toutes les potions comptent comme `minecraft:potion` *(corrigé en 1.1.0)*.
 - REI ne permet pas de faire glisser les items de sa liste principale. Utilisez la touche `N`, ou passez par les favoris REI.
 - Les clés utilisées pour Nexo, Oraxen et ItemsAdder correspondent aux versions publiques de ces plugins. Vérifiez-les sur votre serveur avec `/itemlists dump`.
 
+[1.1.0]: https://github.com/Eldrazy-Git/Item_lists/releases/tag/v1.1.0
 [1.0.1]: https://github.com/Eldrazy-Git/Item_lists/releases/tag/v1.0.1
 [1.0.0]: https://github.com/Eldrazy-Git/Item_lists/releases/tag/v1.0.0

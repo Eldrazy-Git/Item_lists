@@ -51,7 +51,7 @@ Le cycle général :
 
 1. **Créer une liste** : touche `Y` (ou `/itemlists open`) puis **Nouvelle**. Si aucune liste n'est active, la première créée le devient automatiquement.
 2. **Ajouter des items**, au choix :
-   - bouton **Ajouter…** : ouvre le catalogue. Clic = +1 pile, Maj+clic = +1, clic droit = retirer ;
+   - bouton **Ajouter…** : ouvre le catalogue (items vanilla avec chaque variante de potion et chaque livre enchanté à tous ses niveaux, et items custom découverts). Clic = +1 pile, Maj+clic = +1, clic droit = retirer, `Suppr` = oublier un item custom ;
    - dans n'importe quel inventaire : survoler un item et appuyer sur `N` ;
    - en jeu : tenir l'item en main et appuyer sur `N` ;
    - depuis REI/JEI : survoler un item de leur panneau puis `N`, ou le glisser sur le panneau latéral (favoris REI, liste JEI).
@@ -336,13 +336,15 @@ data/                      modèles et persistance
   CustomItemCache            items custom découverts, par serveur
   ItemSource, ItemIds        source (vanilla/nexo/…) et normalisation des ids
 io/                        ListJsonCodec, ListCsvCodec, ImportService, ExportService
-identity/                  ItemIdentity, IdentityExtractor, IdentityRegistry, CustomDataReaders
-inventory/                 RecursiveCounter (pur, testable), McCountableItem, InventoryTracker
+identity/                  ItemIdentity, IdentityExtractor, IdentityRegistry, CustomDataReaders,
+                             VanillaVariants (potions, flèches à effet, livres enchantés)
+inventory/                 RecursiveCounter (pur, testable), McCountableItem, InventoryTracker,
+                             ContainerOrigin (vrai stockage ou menu de plugin ?)
 client/
   ItemDisplay                id → stack affichable (cache, repli « papier + nom »)
   EntryRows                  lignes filtrées/triées avec quantités (menu + panneau)
-  ListActions                ajout/retrait d'items (catalogue, touche U, REI/JEI)
-  CatalogData                contenu du catalogue (registre, onglets créatifs, items custom)
+  ListActions                ajout/retrait d'items (catalogue, touche N, REI/JEI)
+  CatalogData                contenu du catalogue (registre, onglets créatifs, livres à tous les niveaux, items custom)
   FileDialogs                sélecteur de fichier natif
   ModKeyBindings             touches
   command/                   /itemlists dump | open | hud
@@ -354,8 +356,8 @@ compat/rei, compat/jei     intégrations optionnelles
 ```
 
 Principes :
-- **La logique pure est séparée de Minecraft** : `ListJsonCodec`, `ListCsvCodec`, `ListIds`, `ListManager`, `RecursiveCounter` et `CustomDataReaders` se testent sans démarrer le jeu.
-- **Pas de mixin**. Tout passe par les événements de Fabric API (`ScreenEvents`, `HudElementRegistry`, `ClientCommandRegistrationCallback`, `KeyMappingHelper`…). Seul un class tweaker ([`itemlists.classtweaker`](../src/main/resources/itemlists.classtweaker)) ouvre cinq champs de `AbstractContainerScreen` en lecture.
+- **La logique pure est séparée de Minecraft** : `ListJsonCodec`, `ListCsvCodec`, `ListIds`, `ListManager`, `RecursiveCounter`, `CustomDataReaders`, le format de `VanillaVariants` et la purge de `CustomItemCache` se testent sans démarrer le jeu.
+- **Pas de mixin**. Tout passe par les événements de Fabric API (`ScreenEvents`, `HudElementRegistry`, `ClientCommandRegistrationCallback`, `KeyMappingHelper`…). Seul un class tweaker ([`itemlists.classtweaker`](../src/main/resources/itemlists.classtweaker)) ouvre en lecture cinq champs de `AbstractContainerScreen` (position, taille, slot survolé) et le livre de recettes de `AbstractRecipeBookScreen`.
 - **Le style visuel est centralisé** dans [`Theme`](../src/main/java/com/eldrazy/itemlists/client/gui/Theme.java) (palette et primitives de dessin reprises de chunklimitcounter).
 - **Les commentaires du code sont en français.**
 
@@ -399,22 +401,28 @@ Prérequis : **Java 25** (Loom 1.18 l'exige pour lancer Gradle).
 - CSV : format Excel FR (BOM, `;`, CRLF, guillemets, anti-formules), aller-retour, séparateur `,`, colonnes dans le désordre, Windows-1252.
 - Slugs, gestionnaire de listes (renommage, suppression, chargement de fichiers « échangés », fichier cassé préservé).
 - Comptage récursif shulker ⇄ bundle, conteneurs empilés, profondeur bornée, saturation.
-- Lecteurs `custom_data` de Nexo, Oraxen, ItemsAdder, MythicMobs, MMOItems et Bukkit générique.
+- Lecteurs `custom_data` de Nexo, Oraxen, ItemsAdder, MythicMobs (ancien et nouveau format), MMOItems et Bukkit générique.
+- Format des variantes vanilla (`minecraft:potion[…]`, `minecraft:enchanted_book[…=…,…]`).
+- Nettoyage du cache des items custom selon leur origine (extrait d'un cache réel pollué par des menus).
 
 ### Tests en jeu (`src/gametest`, API client gametest de Fabric)
-Le test crée un monde, donne de **faux items de plugins** (composants posés par `/give`, comme le ferait un serveur Nexo ou ItemsAdder) et une shulker contenant des diamants et un bundle de rubis Nexo. Il vérifie ensuite :
-- les identités ;
+Le test crée un monde, donne de **faux items de plugins** (composants posés par `/give`, comme le ferait un serveur Nexo, ItemsAdder ou MythicMobs / Crucible) et une shulker contenant des diamants et un bundle de rubis Nexo. Il vérifie ensuite :
+- les identités, y compris une arme Crucible et un bouton de menu ;
 - `/itemlists dump` ;
 - la sauvegarde ;
 - le comptage récursif ;
-- la découverte des items custom.
+- la découverte des items custom : un bouton de menu n'est pas mémorisé, une icône Nexo dans un **faux menu ouvert par le serveur** n'est ni comptée ni mémorisée, un item dans un **vrai coffre** ouvert d'un clic droit l'est ;
+- les potions, flèches et livres enchantés : comptés séparément, icône reconstruite depuis l'id, tous les niveaux de livres dans le catalogue ;
+- le panneau de l'inventaire : position « dessous », saisie d'une quantité au clavier, molette ;
+- avec `-Pviewer=rei` ou `-Pviewer=jei` : la touche `N` sur un item de leur liste.
 
-Il capture enfin chaque écran **en anglais puis en français**, dans `build/run/clientGameTest/screenshots/`. Les images de ce document en proviennent.
+Il capture enfin chaque écran **en anglais puis en français**, dans `build/run/clientGameTest/screenshots/`. Les fichiers `showcase_*.png` (1920×1045, interface à l'échelle 3) sont ceux de ce document.
 
 ### Publier une version
-1. Mettre à jour `version` dans `gradle.properties`.
-2. `./gradlew build`.
+1. Mettre à jour `version` dans `gradle.properties` et ajouter la section de la version en tête du [CHANGELOG](../CHANGELOG.md).
+2. `./gradlew build runClientGameTest` (puis avec `-Pviewer=rei` et `-Pviewer=jei`).
 3. Le jar est dans `build/libs/itemlists-<version>.jar` (le `-sources.jar` est facultatif).
+4. Créer le tag `v<version>` et la release GitHub avec le jar et l'extrait du changelog.
 
 ---
 
@@ -423,7 +431,9 @@ Il capture enfin chaque écran **en anglais puis en français**, dans `build/run
 | Symptôme | Cause probable / solution |
 |---|---|
 | Un item custom est compté comme du papier | L'extracteur ne trouve pas sa clé : `/itemlists dump` sur l'item, puis voir [§11](#11-ajouter-la-prise-en-charge-dun-plugin). |
-| Un item custom n'apparaît pas dans le catalogue | Il n'a jamais été vu sur ce serveur : ouvrez le menu du plugin qui le contient (`/nexo inventory`…) ou prenez-le en main. Vérifiez que **Réglages → Découvrir les items custom** est activé. |
+| Un item custom n'apparaît pas dans le catalogue | Il n'a jamais été vu sur ce serveur dans votre inventaire ou un vrai coffre : prenez-le en main, ou ajoutez-le avec `N`. Les items vus seulement dans un menu de plugin sont ignorés (option **Réglages → Découvrir aussi dans les menus**). Vérifiez aussi que **Réglages → Découvrir les items custom** est activé. |
+| Une icône de menu apparaît dans le catalogue | Survolez-la dans le catalogue et appuyez sur `Suppr`. |
+| Une potion, flèche ou un livre enchanté de la liste reste à 0 | L'entrée date d'avant la 1.1.0 (`minecraft:potion` sans variante) : remplacez-la par la variante voulue depuis le catalogue. |
 | Une icône custom s'affiche en papier avec un nom | L'exemplaire mémorisé n'a pas pu être relu (item supprimé du serveur, autre version). Revoir l'item en jeu met le cache à jour. |
 | Le HUD n'apparaît pas | Aucune liste active (double-clic sur une liste), HUD masqué (`H`), F1, ou un menu ouvert. |
 | Les boutons chevauchent ceux d'un autre mod | Ajustez `buttonsOffsetX` / `buttonsOffsetY` dans `config/itemlists/config.json`, ou désactivez-les dans les Réglages. |
