@@ -205,6 +205,7 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 		context.waitTicks(5);
 		context.takeScreenshot("showcase_inventory_side_panel");
 		testViewerHoverKey(context);
+		testPanelEditing(context);
 		// Panneau ouvert sans liste active : il doit rester visible avec une invitation a en choisir une.
 		ItemList active = context.computeOnClient(mc -> ItemListsClient.getInstance().lists().active());
 		context.runOnClient(mc -> ItemListsClient.getInstance().setActiveList(null));
@@ -271,6 +272,58 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 			var list = ItemListsClient.getInstance().lists().active();
 			list.entries().remove(list.entries().size() - 1);
 			ItemListsClient.getInstance().lists().markDirty(list);
+		});
+	}
+
+	/**
+	 * Position "dessous" puis edition directe dans le panneau : clic sur le 1er item, saisie de 250, Entree ;
+	 * molette sur la quantite : +1. L'inventaire doit etre ouvert avec le panneau visible.
+	 */
+	private static void testPanelEditing(ClientGameTestContext context) {
+		// Interface x2 (640x360) : assez de hauteur sous l'inventaire pour la position "dessous".
+		context.runOnClient(mc -> {
+			mc.options.guiScale().set(2);
+			mc.resizeGui();
+			ItemListsClient.getInstance().config().sidePanelSide = com.eldrazy.itemlists.config.ModConfig.PanelSide.BELOW;
+		});
+		context.waitTicks(3);
+		context.takeScreenshot("showcase_panel_below");
+		int[] cell = context.computeOnClient(mc -> {
+			var screen = (net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?>) mc.gui.screen();
+			var area = com.eldrazy.itemlists.client.inventory.ContainerOverlay.layout(screen).area();
+			int scale = mc.getWindow().getGuiScale();
+			// Premiere case : un peu apres l'icone, puis tout a droite de la case (zone de la quantite).
+			return new int[] {(area.left() + 30) * scale, (area.top() + 22 + 8) * scale, (area.left() + 140) * scale};
+		});
+		ItemList active = context.computeOnClient(mc -> ItemListsClient.getInstance().lists().active());
+		int original = active.entries().get(0).target();
+
+		context.getInput().setCursorPos(cell[0], cell[1]);
+		context.waitTicks(2);
+		context.getInput().pressMouse(org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT);
+		context.getInput().pressKey(org.lwjgl.glfw.GLFW.GLFW_KEY_2);
+		context.getInput().pressKey(org.lwjgl.glfw.GLFW.GLFW_KEY_5);
+		context.getInput().pressKey(org.lwjgl.glfw.GLFW.GLFW_KEY_0);
+		context.waitTicks(2);
+		context.takeScreenshot("showcase_panel_editing");
+		context.getInput().pressKey(org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER);
+		context.waitTicks(2);
+		expect(context.computeOnClient(mc -> active.entries().get(0).target()), 250);
+		// Les chiffres ne doivent pas avoir ferme l'inventaire ni ete pris pour un echange avec la hotbar.
+		expect(context.computeOnClient(mc -> mc.gui.screen() instanceof InventoryScreen), true);
+
+		context.getInput().setCursorPos(cell[2], cell[1]);
+		context.waitTicks(2);
+		context.getInput().scroll(1);
+		context.waitTicks(2);
+		expect(context.computeOnClient(mc -> active.entries().get(0).target()), 251);
+
+		context.runOnClient(mc -> {
+			active.entries().get(0).setTarget(original);
+			ItemListsClient.getInstance().lists().markDirty(active);
+			ItemListsClient.getInstance().config().sidePanelSide = com.eldrazy.itemlists.config.ModConfig.PanelSide.AUTO;
+			mc.options.guiScale().set(0);
+			mc.resizeGui();
 		});
 	}
 

@@ -20,9 +20,12 @@ public class ModConfig {
 	/** Panneau lateral de la liste active ouvert dans les inventaires. */
 	public boolean sidePanelVisible = false;
 
-	/** Cote du panneau lateral. AUTO : a l'oppose du panneau d'items de REI / JEI, sinon a droite. */
+	/**
+	 * Position du panneau de la liste active dans les inventaires. AUTO : a l'oppose du panneau d'items
+	 * de REI / JEI, sinon a droite. BELOW : sous l'inventaire (retour sur le cote s'il manque de place).
+	 */
 	public enum PanelSide {
-		AUTO, LEFT, RIGHT
+		AUTO, LEFT, RIGHT, BELOW
 	}
 
 	public PanelSide sidePanelSide = PanelSide.AUTO;

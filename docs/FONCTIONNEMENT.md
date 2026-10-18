@@ -55,7 +55,7 @@ Le cycle général :
    - dans n'importe quel inventaire : survoler un item et appuyer sur `N` ;
    - en jeu : tenir l'item en main et appuyer sur `N` ;
    - depuis REI/JEI : survoler un item de leur panneau puis `N`, ou le glisser sur le panneau latéral (favoris REI, liste JEI).
-3. **Régler les quantités** dans le menu : clic sur le nombre pour le saisir, ou molette (±1, Maj ±64, Ctrl ±10).
+3. **Régler les quantités** dans le menu ou **directement dans le panneau de l'inventaire** : clic sur l'item (panneau) ou sur le nombre (menu) pour le saisir, ou molette sur la quantité (±1, Maj ±64, Ctrl ±10).
 4. **Suivre** : la liste active s'affiche dans le HUD. Dans les inventaires, le bouton longue-vue ouvre un panneau latéral avec la même liste.
 5. **Partager** : Export JSON ou CSV. Le dossier s'ouvre et le chemin du fichier est copié dans le presse-papiers.
 
@@ -251,14 +251,18 @@ L'**éditeur** (`/itemlists hud`, Réglages, ou une touche à assigner) affiche 
 
 Le mod se greffe sur **tout** écran de conteneur (`AbstractContainerScreen`) : inventaire, coffres, shulkers, ender chest, barils, menus de plugins. Il passe uniquement par l'API `ScreenEvents` de Fabric, **sans mixin**. Un petit *class tweaker* rend seulement lisibles la position de la fenêtre et le slot survolé.
 
-**Les deux boutons** (livre = menu des listes, longue-vue = panneau latéral) sont placés selon l'écran :
+**Les trois boutons** (livre = menu des listes, longue-vue = afficher/masquer le panneau, boussole = position du panneau : auto → gauche → droite → dessous) sont placés selon l'écran :
 - au-dessus de la fenêtre, alignés à droite. Cette zone est libre : le livre de recettes est à gauche, les effets de potion à droite ;
 - dans l'inventaire créatif (onglets au-dessus) ou si la fenêtre touche le haut de l'écran, ils passent sur le côté ;
 - ils sont repositionnés à chaque image, ce qui suit l'ouverture du livre de recettes ;
 - leur décalage est réglable dans `config.json` (`buttonsOffsetX`, `buttonsOffsetY`).
 
 **Le panneau latéral** :
-- il se place du côté opposé à la liste d'items de REI/JEI (à droite sans eux), ou de l'autre côté s'il manque de place. Côté gauche, il se décale pour ne pas couvrir le livre de recettes ouvert. Réglage : **Réglages → Panneau latéral** (auto, gauche, droite) ;
+- **position** (bouton boussole ou **Réglages → Panneau latéral**) :
+  - *auto* : à l'opposé de la liste d'items de REI/JEI (à droite sans eux) ;
+  - *gauche* / *droite* : côté forcé, avec repli de l'autre côté s'il manque de place ; à gauche, il se décale pour ne pas couvrir le livre de recettes ouvert ;
+  - *dessous* : sous l'inventaire, sur plusieurs colonnes si la largeur le permet, en laissant libre le bas de l'écran pour les barres de recherche de REI/JEI. S'il manque de place (interface très grande), retour sur le côté ;
+- **édition directe** : un clic sur un item ouvre la saisie de son objectif. Pendant la saisie, le clavier est capté (les chiffres ne déclenchent plus l'échange avec la hotbar, `E` ne ferme pas l'inventaire) : Entrée ou un clic ailleurs valide, Échap annule, ↑/↓ ajuste. La molette sur la quantité ajuste directement l'objectif ;
 - sa hauteur s'ajuste au contenu, pour laisser de la place à REI/JEI ;
 - il défile à la molette, et les infobulles s'affichent sur les icônes ;
 - les clics qui le touchent ne sont **jamais** transmis au conteneur, ce qui évite de jeter par erreur l'item tenu au curseur.

@@ -40,9 +40,10 @@ Mod **Fabric 26.2**, **100 % client**, pour créer et suivre des listes d'items 
 
 ### Inventaires et conteneurs
 Dans l'inventaire et **tous** les écrans de conteneur (coffres, shulkers, ender chest, barils, menus de plugins…) :
-- bouton **livre** : menu des listes ; bouton **longue-vue** : panneau latéral de la liste active ;
+- bouton **livre** : menu des listes ; bouton **longue-vue** : afficher/masquer le panneau de la liste active ; bouton **boussole** : position du panneau (auto, gauche, droite, dessous) ;
+- **quantités modifiables directement dans le panneau** : clic sur un item puis saisie au clavier (Entrée pour valider, Échap pour annuler, ↑/↓ ±1), ou molette sur la quantité (±1, Maj ±64, Ctrl ±10) ;
 - touche `N` sur un item survolé (inventaire, liste et favoris de REI/JEI) : ajout à la liste active. En jeu sans menu, `N` ajoute l'item tenu en main ;
-- le panneau se place à l'opposé de la liste d'items de REI/JEI (à droite sans eux), en évitant le livre de recettes. Réglable : auto, gauche, droite.
+- en position auto, le panneau se place à l'opposé de la liste d'items de REI/JEI (à droite sans eux), en évitant le livre de recettes. En position « dessous », il s'étale sur plusieurs colonnes sous l'inventaire (retour sur le côté s'il manque de place).
 
 ![Boutons et panneau latéral dans l'inventaire](docs/images/panneau-lateral.png)
 
