@@ -93,9 +93,9 @@ Les items custom sont des items vanilla portant des data components. Des **extra
       "target": 3072
     },
     {
-      "item": "citadelle:etherium_shard",
-      "label": "Éclat d’Etherium",
-      "target": 960
+      "item": "minecraft:echo_shard",
+      "label": "Éclat d'écho",
+      "target": 10
     }
   ]
 }
