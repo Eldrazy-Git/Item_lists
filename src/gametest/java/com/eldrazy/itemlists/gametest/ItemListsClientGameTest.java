@@ -82,6 +82,7 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 			setUpActiveList(context);
 			testCounting(context);
 			testMenuVersusChest(context, world);
+			testVanillaVariants(context, world);
 			takeScreenshots(context, "");
 			switchLanguage(context, "fr_fr");
 			takeScreenshots(context, "_fr");
@@ -201,6 +202,41 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 		expect(context.computeOnClient(mc -> ItemListsClient.getInstance().tracker().count("nexo:chest_gem")), 1L);
 		context.setScreen(() -> null);
 		context.runOnClient(mc -> ItemListsClient.getInstance().config().countOpenContainer = false);
+		context.waitTicks(5);
+	}
+
+	/**
+	 * Potions, fleches a effet et livres enchantes : une identite par variante (format de l'index du catalogue),
+	 * comptees separement, et l'icone reconstruite depuis l'id redonne la meme identite.
+	 */
+	private static void testVanillaVariants(ClientGameTestContext context, TestSingleplayerContext world) {
+		world.getServer().runCommand("clear ItemListsDev");
+		give(world, "potion[potion_contents={potion:\"minecraft:fire_resistance\"}]", 2);
+		give(world, "splash_potion[potion_contents={potion:\"minecraft:strong_healing\"}]", 1);
+		give(world, "tipped_arrow[potion_contents={potion:\"minecraft:long_swiftness\"}]", 16);
+		give(world, "tipped_arrow[potion_contents={potion:\"minecraft:poison\"}]", 8);
+		give(world, "enchanted_book[stored_enchantments={\"minecraft:sharpness\":5}]", 1);
+		give(world, "enchanted_book[stored_enchantments={\"minecraft:mending\":1,\"minecraft:unbreaking\":3}]", 1);
+		context.waitTicks(10);
+
+		String[] ids = {
+				"minecraft:potion[minecraft:fire_resistance]",
+				"minecraft:splash_potion[minecraft:strong_healing]",
+				"minecraft:tipped_arrow[minecraft:long_swiftness]",
+				"minecraft:tipped_arrow[minecraft:poison]",
+				"minecraft:enchanted_book[minecraft:sharpness=5]",
+				"minecraft:enchanted_book[minecraft:mending=1,minecraft:unbreaking=3]"};
+		long[] expected = {2, 1, 16, 8, 1, 1};
+		for (int i = 0; i < ids.length; i++) {
+			String id = ids[i];
+			expect(context.computeOnClient(mc -> ItemListsClient.getInstance().tracker().count(id)), expected[i]);
+			// Aller-retour : l'icone construite depuis l'id a la meme identite.
+			expect(context.computeOnClient(mc -> IdentityRegistry.identify(com.eldrazy.itemlists.client.ItemDisplay.stackFor(id)).id()), id);
+		}
+		expect(context.computeOnClient(mc -> ItemListsClient.getInstance().tracker().count("minecraft:tipped_arrow")), 0L);
+		expect(context.computeOnClient(mc -> com.eldrazy.itemlists.identity.VanillaVariants.label(
+				com.eldrazy.itemlists.client.ItemDisplay.stackFor("minecraft:enchanted_book[minecraft:sharpness=5]"))).startsWith("Enchanted Book ("), true);
+		world.getServer().runCommand("clear ItemListsDev");
 		context.waitTicks(5);
 	}
 

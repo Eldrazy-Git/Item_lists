@@ -23,6 +23,7 @@ import com.eldrazy.itemlists.ItemListsClient;
 import com.eldrazy.itemlists.data.CustomItemCache;
 import com.eldrazy.itemlists.data.ItemSource;
 import com.eldrazy.itemlists.identity.IdentityRegistry;
+import com.eldrazy.itemlists.identity.VanillaVariants;
 
 /** Contenu du catalogue : items vanilla (avec leurs onglets creatifs) + items custom decouverts sur le serveur. */
 public final class CatalogData {
@@ -49,13 +50,15 @@ public final class CatalogData {
 		// 1) Ordre et variantes des onglets creatifs (un seul stack par identite).
 		for (CreativeModeTab tab : categoryTabs()) {
 			for (ItemStack stack : tab.getDisplayItems()) {
-				String id = IdentityRegistry.vanillaId(stack);
+				// Une entree par variante (potion de soin, livre Tranchant V...), un seul stack pour le reste.
+				String variant = VanillaVariants.variantId(stack);
+				String id = variant != null ? variant : IdentityRegistry.vanillaId(stack);
 				Entry existing = entries.get(id);
 				if (existing == null) {
-					ItemStack icon = new ItemStack(stack.getItem());
+					ItemStack icon = variant != null ? stack.copyWithCount(1) : new ItemStack(stack.getItem());
 					Set<CreativeModeTab> tabs = new HashSet<>();
 					tabs.add(tab);
-					entries.put(id, new Entry(id, icon, icon.getHoverName().getString(), ItemSource.VANILLA, tabs));
+					entries.put(id, new Entry(id, icon, VanillaVariants.label(icon), ItemSource.VANILLA, tabs));
 				} else {
 					existing.tabs().add(tab);
 				}
@@ -67,7 +70,8 @@ public final class CatalogData {
 				continue;
 			}
 			String id = BuiltInRegistries.ITEM.getKey(item).toString();
-			if (!entries.containsKey(id)) {
+			// Potions et livres "nus" (sans variante) n'ont pas de sens dans une liste : seules leurs variantes y sont.
+			if (!entries.containsKey(id) && !VanillaVariants.hasVariants(id)) {
 				ItemStack icon = new ItemStack(item);
 				entries.put(id, new Entry(id, icon, icon.getHoverName().getString(), ItemSource.VANILLA, Set.of()));
 			}

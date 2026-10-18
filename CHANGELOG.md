@@ -2,6 +2,18 @@
 
 Toutes les évolutions notables d'Item Lists sont listées ici.
 
+## [Non publié]
+
+### Ajouté
+- **Potions, flèches à effet et livres enchantés distingués par leurs composants**, au même format que l'index du catalogue La Citadelle :
+  - potions, potions jetables / persistantes et flèches à effet : `minecraft:potion[minecraft:fire_resistance]`, `minecraft:tipped_arrow[minecraft:long_swiftness]` (composant `potion_contents`) ;
+  - livres enchantés : `minecraft:enchanted_book[minecraft:sharpness=5]`, plusieurs enchantements triés et séparés par des virgules (composant `stored_enchantments`).
+  
+  Chaque variante est comptée séparément, a sa propre icône et son nom (« Livre enchanté (Tranchant V) »), et le catalogue propose toutes les variantes des onglets créatifs.
+
+### À faire après la mise à jour
+- Une entrée `minecraft:potion`, `minecraft:tipped_arrow` ou `minecraft:enchanted_book` sans variante ne compte plus que les items sans composant : remplacez-la par la variante voulue depuis le catalogue.
+
 ## [1.0.1] - 2026-10-19
 
 Corrections issues de tests sur un vrai serveur (Nexo + MythicMobs).
@@ -71,7 +83,7 @@ Première version publique.
 - EMI n'est pas pris en charge : il n'existe pas encore de version EMI pour Minecraft 26.x.
 
 ### Limites connues
-- Pour un item vanilla, l'identité est l'item lui-même : toutes les potions comptent comme `minecraft:potion`.
+- Pour un item vanilla, l'identité est l'item lui-même : toutes les potions comptent comme `minecraft:potion` *(corrigé depuis : voir « Non publié »)*.
 - REI ne permet pas de faire glisser les items de sa liste principale. Utilisez la touche `N`, ou passez par les favoris REI.
 - Les clés utilisées pour Nexo, Oraxen et ItemsAdder correspondent aux versions publiques de ces plugins. Vérifiez-les sur votre serveur avec `/itemlists dump`.
 

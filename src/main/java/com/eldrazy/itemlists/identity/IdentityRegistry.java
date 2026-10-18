@@ -24,6 +24,7 @@ import com.eldrazy.itemlists.data.ListIds;
  * Chaine d'extracteurs d'identite, interroges dans l'ordre jusqu'au premier qui reconnait l'item :
  * <ol>
  *   <li>plugins connus via custom_data (Nexo, Oraxen, ItemsAdder, MythicMobs, MMOItems, puis toute cle Bukkit "x:id") ;</li>
+ *   <li>variantes vanilla : potions, fleches a effet, livres enchantes (voir {@link VanillaVariants}) ;</li>
  *   <li>repli : item_model different du modele vanilla, puis custom_model_data, puis nom custom non italique ;</li>
  *   <li>sinon : l'item vanilla ("minecraft:diamond"). Un item simplement renomme a l'enclume reste vanilla.</li>
  * </ol>
@@ -38,6 +39,7 @@ public final class IdentityRegistry {
 		register(simple("mythicmobs", ItemSource.OTHER, CustomDataReaders::mythicId));
 		register(simple("mmoitems", ItemSource.OTHER, CustomDataReaders::mmoItemsId));
 		register(simple("bukkit", ItemSource.OTHER, CustomDataReaders::genericBukkitId));
+		register(new VanillaVariantExtractor());
 		register(new ItemModelExtractor());
 		register(new CustomModelDataExtractor());
 		register(new CustomNameExtractor());
@@ -107,6 +109,28 @@ public final class IdentityRegistry {
 				return id == null ? null : new ItemIdentity(id, source, name);
 			}
 		};
+	}
+
+	/**
+	 * Potions, fleches a effet et livres enchantes vanilla : la variante fait partie de l'identite
+	 * ("minecraft:potion[minecraft:healing]", "minecraft:enchanted_book[minecraft:sharpness=5]").
+	 * Ignore les items au modele modifie (reskin d'un plugin), laisses aux extracteurs de repli.
+	 */
+	private static final class VanillaVariantExtractor implements IdentityExtractor {
+		@Override
+		public String name() {
+			return "vanilla_variant";
+		}
+
+		@Override
+		public ItemIdentity extract(ItemInstance item, CompoundTag customData) {
+			Identifier model = item.get(DataComponents.ITEM_MODEL);
+			if (model != null && !model.equals(item.typeHolder().value().components().get(DataComponents.ITEM_MODEL))) {
+				return null;
+			}
+			String id = VanillaVariants.variantId(item);
+			return id == null ? null : new ItemIdentity(id, ItemSource.VANILLA, name());
+		}
 	}
 
 	/** Marqueur : extracteurs de repli, toujours interroges apres ceux des plugins. */

@@ -82,6 +82,7 @@ Les items custom sont des items vanilla portant des data components. Des **extra
 | mythicmobs | `custom_data.PublicBukkitValues."mythicmobs:type"` (ou l'ancien `MYTHIC_TYPE`) | `mythicmobs:<type>` |
 | mmoitems | `custom_data.MMOITEMS_ITEM_TYPE` + `MMOITEMS_ITEM_ID` | `mmoitems:<type>/<id>` |
 | bukkit | toute clé texte `PublicBukkitValues."<plugin>:id"` | `<plugin>:<valeur>` |
+| vanilla_variant | potions, potions jetables / persistantes et flèches à effet (`potion_contents`) ; livres enchantés (`stored_enchantments`) | `minecraft:potion[minecraft:fire_resistance]`, `minecraft:tipped_arrow[minecraft:long_swiftness]`, `minecraft:enchanted_book[minecraft:sharpness=5]` |
 | item_model | `minecraft:item_model` différent du modèle vanilla | l'id du modèle (ex. `pack:ruby`), ou `minecraft:paper#diamond` si c'est un modèle vanilla |
 | custom_model_data | `minecraft:custom_model_data` | `minecraft:paper#10001` |
 | custom_name | nom custom **non italique** (posé par un plugin) | `minecraft:paper#nom_slug` |
@@ -159,7 +160,6 @@ config/itemlists/
 ```
 
 ## Limites connues
-- Pour un item vanilla, l'identité est l'item lui-même : toutes les potions comptent comme `minecraft:potion`, les livres enchantés comme `minecraft:enchanted_book`.
 - L'opacité du texte du HUD ne s'applique pas aux icônes d'items (Minecraft les dessine toujours opaques).
 - Le sélecteur de fichier natif peut s'ouvrir derrière le jeu en plein écran : le dossier `import/` reste disponible.
 

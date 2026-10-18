@@ -87,14 +87,16 @@ Chaque stack passe par une chaîne d'**extracteurs** ([`IdentityRegistry`](../sr
 | 4 | mythicmobs | `custom_data → PublicBukkitValues → "mythicmobs:type"` (ou l'ancien `MYTHIC_TYPE`) | `mythicmobs:ruby_sword` |
 | 5 | mmoitems | `custom_data → MMOITEMS_ITEM_TYPE + MMOITEMS_ITEM_ID` | `mmoitems:sword/ruby_sword` |
 | 6 | bukkit | toute clé texte `PublicBukkitValues → "<plugin>:id"` | `<plugin>:<valeur>` |
-| 7 | item_model | modèle différent de celui de l'item de base | `monpack:ruby`, ou `minecraft:paper#diamond` pour un modèle vanilla réutilisé |
-| 8 | custom_model_data | `minecraft:custom_model_data` | `minecraft:paper#10001` |
-| 9 | custom_name | nom personnalisé explicitement **non italique** | `minecraft:paper#nom_slug` |
+| 7 | vanilla_variant | potion, potion jetable / persistante, flèche à effet : `potion_contents` ; livre enchanté : `stored_enchantments` | `minecraft:potion[minecraft:fire_resistance]`, `minecraft:enchanted_book[minecraft:sharpness=5]` |
+| 8 | item_model | modèle différent de celui de l'item de base | `monpack:ruby`, ou `minecraft:paper#diamond` pour un modèle vanilla réutilisé |
+| 9 | custom_model_data | `minecraft:custom_model_data` | `minecraft:paper#10001` |
+| 10 | custom_name | nom personnalisé explicitement **non italique** | `minecraft:paper#nom_slug` |
 | — | vanilla | aucun des précédents | `minecraft:diamond` |
 
 Quelques règles :
 - Les plugins Bukkit rangent leurs données persistantes sous `PublicBukkitValues` depuis 1.20.5, d'où les extracteurs 1, 2 et 6.
-- Les extracteurs 7 à 9 sont des **replis** pour les plugins inconnus. Ils produisent des identités « synthétiques » (avec `#`) qui restent stables tant que le serveur ne change pas ses items.
+- **Variantes vanilla** : comme dans l'index du catalogue La Citadelle, une potion, une flèche à effet ou un livre enchanté est identifié avec son composant, au format de la syntaxe des composants de Minecraft : `minecraft:splash_potion[minecraft:strong_healing]`, `minecraft:enchanted_book[minecraft:mending=1,minecraft:unbreaking=3]` (plusieurs enchantements triés et séparés par des virgules). Une potion de soin et une potion de poison sont donc comptées séparément, et le catalogue propose chaque variante.
+- Les extracteurs 8 à 10 sont des **replis** pour les plugins inconnus. Ils produisent des identités « synthétiques » (avec `#`) qui restent stables tant que le serveur ne change pas ses items.
 - Un modèle vanilla réutilisé (un papier affiché comme un diamant) donne `minecraft:paper#diamond`. Sinon il serait confondu avec un vrai diamant.
 - Un objet **renommé à l'enclume** reste vanilla. Minecraft affiche ces noms en italique, alors que les plugins forcent presque toujours `italic: false`, et c'est ce qui permet de les distinguer.
 - Un extracteur qui plante est ignoré et ne casse jamais le comptage.

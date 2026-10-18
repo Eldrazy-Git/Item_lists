@@ -15,6 +15,7 @@ import com.eldrazy.itemlists.ItemListsClient;
 import com.eldrazy.itemlists.data.CustomItemCache;
 import com.eldrazy.itemlists.data.ItemSource;
 import com.eldrazy.itemlists.data.ListEntry;
+import com.eldrazy.itemlists.identity.VanillaVariants;
 
 /**
  * Transforme un identifiant de liste en stack affichable (icone + nom) :
@@ -60,12 +61,12 @@ public final class ItemDisplay {
 		if (!entry.label().isBlank()) {
 			return Component.literal(entry.label());
 		}
-		return stackFor(entry.item()).getHoverName();
+		return Component.literal(VanillaVariants.label(stackFor(entry.item())));
 	}
 
-	/** Libelle par defaut a enregistrer lors de l'ajout d'un item a une liste. */
+	/** Libelle par defaut a enregistrer lors de l'ajout d'un item a une liste ("Livre enchante (Tranchant V)"...). */
 	public static String defaultLabel(ItemStack stack) {
-		return stack.getHoverName().getString();
+		return VanillaVariants.label(stack);
 	}
 
 	public static ItemSource sourceOf(String id) {
@@ -77,6 +78,20 @@ public final class ItemDisplay {
 		if (entry != null) {
 			// Item custom connu : son exemplaire memorise, ou le repli "papier + nom" s'il est indecodable.
 			return entry.stack();
+		}
+		// Variante vanilla : "minecraft:potion[minecraft:healing]", "minecraft:enchanted_book[minecraft:sharpness=5]".
+		if (VanillaVariants.variantPart(id) != null) {
+			net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
+			ItemStack variant = VanillaVariants.stackFor(id, minecraft.level == null ? null : minecraft.level.registryAccess());
+			if (variant != null) {
+				return variant;
+			}
+			if (minecraft.level == null) {
+				// Enchantements inconnus hors partie : on retentera une fois en jeu (pas de mise en cache).
+				return null;
+			}
+			Item base = vanillaItem(VanillaVariants.baseId(id));
+			return base == null || base == Items.AIR ? null : new ItemStack(base);
 		}
 		int hash = id.indexOf('#');
 		Item item = vanillaItem(hash >= 0 ? id.substring(0, hash) : id);
