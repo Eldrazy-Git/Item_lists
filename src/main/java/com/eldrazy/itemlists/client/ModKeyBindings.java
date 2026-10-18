@@ -18,7 +18,8 @@ import com.eldrazy.itemlists.client.hud.HudLines;
 
 /**
  * Touches du mod, toutes modifiables dans Options > Commandes. Par defaut on evite les touches
- * vanilla (O, P, L, G...) et celles de chunklimitcounter (K, J, L).
+ * vanilla (O, P, L, G, C, X, chiffres...), celles de chunklimitcounter (K, J, L) et celles de REI / JEI
+ * dans les inventaires (R, U, A, Ctrl+O, Ctrl+F) : d'ou N pour "ajouter l'item survole".
  */
 public final class ModKeyBindings {
 	private static final KeyMapping.Category CATEGORY =
@@ -43,7 +44,7 @@ public final class ModKeyBindings {
 		editHud = KeyMappingHelper.registerKeyMapping(new KeyMapping(
 				"key.itemlists.edit_hud", InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), CATEGORY));
 		addHovered = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-				"key.itemlists.add_hovered", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_U, CATEGORY));
+				"key.itemlists.add_hovered", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_N, CATEGORY));
 		toggleSidePanel = KeyMappingHelper.registerKeyMapping(new KeyMapping(
 				"key.itemlists.toggle_side_panel", InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), CATEGORY));
 

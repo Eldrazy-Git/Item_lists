@@ -20,6 +20,13 @@ public class ModConfig {
 	/** Panneau lateral de la liste active ouvert dans les inventaires. */
 	public boolean sidePanelVisible = false;
 
+	/** Cote du panneau lateral. AUTO : a l'oppose du panneau d'items de REI / JEI, sinon a droite. */
+	public enum PanelSide {
+		AUTO, LEFT, RIGHT
+	}
+
+	public PanelSide sidePanelSide = PanelSide.AUTO;
+
 	/** Memoriser automatiquement les items custom vus sur les serveurs. */
 	public boolean discoverCustomItems = true;
 
@@ -30,6 +37,9 @@ public class ModConfig {
 			hud = new HudConfig();
 		}
 		hud.clamp();
+		if (sidePanelSide == null) {
+			sidePanelSide = PanelSide.AUTO;
+		}
 		buttonsOffsetX = Math.max(-500, Math.min(500, buttonsOffsetX));
 		buttonsOffsetY = Math.max(-500, Math.min(500, buttonsOffsetY));
 	}

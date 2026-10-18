@@ -52,9 +52,9 @@ Le cycle général :
 1. **Créer une liste** : touche `Y` (ou `/itemlists open`) puis **Nouvelle**. Si aucune liste n'est active, la première créée le devient automatiquement.
 2. **Ajouter des items**, au choix :
    - bouton **Ajouter…** : ouvre le catalogue. Clic = +1 pile, Maj+clic = +1, clic droit = retirer ;
-   - dans n'importe quel inventaire : survoler un item et appuyer sur `U` ;
-   - en jeu : tenir l'item en main et appuyer sur `U` ;
-   - depuis REI/JEI : survoler un item de leur panneau puis `U`, ou le glisser sur le panneau latéral.
+   - dans n'importe quel inventaire : survoler un item et appuyer sur `N` ;
+   - en jeu : tenir l'item en main et appuyer sur `N` ;
+   - depuis REI/JEI : survoler un item de leur panneau puis `N`, ou le glisser sur le panneau latéral (favoris REI, liste JEI).
 3. **Régler les quantités** dans le menu : clic sur le nombre pour le saisir, ou molette (±1, Maj ±64, Ctrl ±10).
 4. **Suivre** : la liste active s'affiche dans le HUD. Dans les inventaires, le bouton longue-vue ouvre un panneau latéral avec la même liste.
 5. **Partager** : Export JSON ou CSV. Le dossier s'ouvre et le chemin du fichier est copié dans le presse-papiers.
@@ -258,12 +258,12 @@ Le mod se greffe sur **tout** écran de conteneur (`AbstractContainerScreen`) : 
 - leur décalage est réglable dans `config.json` (`buttonsOffsetX`, `buttonsOffsetY`).
 
 **Le panneau latéral** :
-- il se colle à droite de la fenêtre, ou à gauche s'il manque de place ;
+- il se place du côté opposé à la liste d'items de REI/JEI (à droite sans eux), ou de l'autre côté s'il manque de place. Côté gauche, il se décale pour ne pas couvrir le livre de recettes ouvert. Réglage : **Réglages → Panneau latéral** (auto, gauche, droite) ;
 - sa hauteur s'ajuste au contenu, pour laisser de la place à REI/JEI ;
 - il défile à la molette, et les infobulles s'affichent sur les icônes ;
 - les clics qui le touchent ne sont **jamais** transmis au conteneur, ce qui évite de jeter par erreur l'item tenu au curseur.
 
-Les touches `U` (ajouter l'item survolé) et panneau latéral sont ignorées pendant la saisie dans un champ texte, comme la recherche de l'inventaire créatif.
+Les touches `N` (ajouter l'item survolé) et panneau latéral sont ignorées pendant la saisie dans un champ texte, comme la recherche de l'inventaire créatif.
 
 ### Réglages
 
@@ -280,8 +280,9 @@ Les deux intégrations sont **optionnelles**. Le code est compilé contre leurs 
 | Fonction | REI | JEI |
 |---|---|---|
 | Zones d'exclusion (leur panneau évite nos boutons et notre panneau) | `ExclusionZones` | `IGuiContainerHandler.getGuiExtraAreas` |
-| Touche `U` sur un item de leur panneau ou de leurs favoris | `ScreenRegistry.getFocusedStack` | `getIngredientUnderMouse` (liste + favoris) |
-| Glisser un item sur notre panneau latéral → ajout à la liste active | `DraggableStackVisitor` | `IGhostIngredientHandler` |
+| Touche `N` sur un item de leur panneau ou de leurs favoris | `REIRuntime.getOverlay()` → liste + favoris | `getIngredientUnderMouse` (liste + favoris) |
+| Glisser un item sur notre panneau latéral → ajout à la liste active | `DraggableStackVisitor` (favoris et écrans de recette uniquement : la liste principale de REI n'est pas « glissable ») | `IGhostIngredientHandler` (depuis la liste) |
+| Panneau latéral placé à l'opposé de leur liste d'items | `ConfigObject.isLeftHandSidePanel()` | liste toujours à droite → panneau à gauche |
 
 REI et JEI n'affichent leur panneau que dans les écrans de conteneur. Le glisser-déposer cible donc le panneau latéral, pas le menu des listes.
 

@@ -10,6 +10,8 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
+import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -47,6 +49,8 @@ public final class ContainerOverlay {
 	private static final int PANEL_PADDING = 5;
 	private static final int PANEL_ROW_HEIGHT = 20;
 	private static final int PANEL_HEADER = 22;
+	/** Largeur des onglets du livre de recettes, dessines a sa gauche. */
+	private static final int RECIPE_BOOK_TABS = 32;
 
 	private static int panelScroll;
 
@@ -176,19 +180,63 @@ public final class ContainerOverlay {
 		int rows = list == null ? 2 : Math.max(1, list.entries().size());
 		int content = PANEL_HEADER + rows * PANEL_ROW_HEIGHT + 4;
 		int height = Math.min(screen.imageHeight, content);
+
 		int rightX = screen.leftPos + screen.imageWidth + PANEL_GAP;
 		int rightSpace = screen.width - rightX - PANEL_GAP;
-		if (rightSpace >= PANEL_MIN_WIDTH) {
-			return new ScreenRectangle(rightX, top, Math.min(PANEL_MAX_WIDTH, rightSpace), height);
+		int leftEdge = leftObstacle(screen);
+		int leftSpace = leftEdge - 2 * PANEL_GAP;
+		boolean preferLeft = preferredSide() == ModConfig.PanelSide.LEFT;
+
+		for (int attempt = 0; attempt < 2; attempt++) {
+			boolean left = preferLeft == (attempt == 0);
+			if (left && leftSpace >= PANEL_MIN_WIDTH) {
+				int width = Math.min(PANEL_MAX_WIDTH, leftSpace);
+				return new ScreenRectangle(leftEdge - PANEL_GAP - width, top, width, height);
+			}
+			if (!left && rightSpace >= PANEL_MIN_WIDTH) {
+				return new ScreenRectangle(rightX, top, Math.min(PANEL_MAX_WIDTH, rightSpace), height);
+			}
 		}
-		int leftSpace = screen.leftPos - 2 * PANEL_GAP;
-		if (leftSpace >= PANEL_MIN_WIDTH) {
-			int width = Math.min(PANEL_MAX_WIDTH, leftSpace);
-			return new ScreenRectangle(screen.leftPos - PANEL_GAP - width, top, width, height);
-		}
-		// Ecran trop etroit : le panneau se superpose au bord droit de l'ecran.
+		// Ecran trop etroit : le panneau se superpose au bord de l'ecran.
 		int width = Math.min(PANEL_MAX_WIDTH, screen.width / 3);
-		return new ScreenRectangle(screen.width - width - 2, top, width, height);
+		return new ScreenRectangle(preferLeft ? 2 : screen.width - width - 2, top, width, height);
+	}
+
+	/**
+	 * Fourni par l'integration REI / JEI : cote ou se trouve leur panneau d'items (LEFT / RIGHT),
+	 * pour placer le notre en face. Null si aucun des deux n'est installe.
+	 */
+	private static java.util.function.Supplier<ModConfig.PanelSide> viewerPanelSide;
+
+	public static void setViewerPanelSide(java.util.function.Supplier<ModConfig.PanelSide> supplier) {
+		viewerPanelSide = supplier;
+	}
+
+	private static ModConfig.PanelSide preferredSide() {
+		ModConfig.PanelSide configured = config().sidePanelSide;
+		if (configured != ModConfig.PanelSide.AUTO && configured != null) {
+			return configured;
+		}
+		ModConfig.PanelSide viewer = null;
+		try {
+			viewer = viewerPanelSide == null ? null : viewerPanelSide.get();
+		} catch (RuntimeException | LinkageError e) {
+			// Integration incompatible : on garde le placement par defaut.
+		}
+		if (viewer == ModConfig.PanelSide.RIGHT) {
+			return ModConfig.PanelSide.LEFT;
+		}
+		return ModConfig.PanelSide.RIGHT;
+	}
+
+	/** Bord gauche libre : la GUI, ou le livre de recettes (et ses onglets) s'il est ouvert a cote. */
+	private static int leftObstacle(AbstractContainerScreen<?> screen) {
+		if (screen instanceof AbstractRecipeBookScreen<?> book && book.recipeBookComponent.isVisible()) {
+			boolean besideGui = screen.leftPos != (screen.width - screen.imageWidth) / 2;
+			int bookLeft = (screen.width - RecipeBookComponent.IMAGE_WIDTH) / 2 - (besideGui ? 86 : 0);
+			return Math.min(screen.leftPos, bookLeft - RECIPE_BOOK_TABS);
+		}
+		return screen.leftPos;
 	}
 
 	/** Zones occupees par nos ajouts (boutons + panneau), pour les zones d'exclusion de REI / JEI. */

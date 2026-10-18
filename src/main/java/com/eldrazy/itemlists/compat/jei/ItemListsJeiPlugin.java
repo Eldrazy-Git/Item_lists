@@ -22,6 +22,7 @@ import com.eldrazy.itemlists.ItemListsClient;
 import com.eldrazy.itemlists.client.ListActions;
 import com.eldrazy.itemlists.client.inventory.ContainerOverlay;
 import com.eldrazy.itemlists.client.inventory.HoveredStacks;
+import com.eldrazy.itemlists.config.ModConfig;
 
 /**
  * Integration JEI (entrypoint "jei_mod_plugin", charge uniquement si JEI est installe) :
@@ -58,6 +59,8 @@ public class ItemListsJeiPlugin implements IModPlugin {
 	@Override
 	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
 		runtime = jeiRuntime;
+		// La liste d'ingredients de JEI est toujours a droite (favoris a gauche) : notre panneau va a gauche.
+		ContainerOverlay.setViewerPanelSide(() -> ModConfig.PanelSide.RIGHT);
 		if (!providerRegistered) {
 			providerRegistered = true;
 			HoveredStacks.register((screen, mouseX, mouseY) -> {

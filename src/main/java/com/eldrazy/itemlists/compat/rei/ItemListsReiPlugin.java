@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.item.ItemStack;
 
-import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
+import me.shedaniel.rei.api.client.REIRuntime;
+import me.shedaniel.rei.api.client.config.ConfigObject;
 import me.shedaniel.rei.api.client.gui.drag.DraggableStack;
 import me.shedaniel.rei.api.client.gui.drag.DraggableStackVisitor;
 import me.shedaniel.rei.api.client.gui.drag.DraggedAcceptorResult;
@@ -24,21 +26,32 @@ import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import com.eldrazy.itemlists.client.ListActions;
 import com.eldrazy.itemlists.client.inventory.ContainerOverlay;
 import com.eldrazy.itemlists.client.inventory.HoveredStacks;
+import com.eldrazy.itemlists.config.ModConfig;
 
 /**
  * Integration REI (entrypoint "rei_client", charge uniquement si REI est installe) :
  * <ul>
  *   <li>zones d'exclusion : le panneau d'items de REI ne recouvre ni nos boutons ni notre panneau lateral ;</li>
  *   <li>touche "ajouter l'item survole" valable aussi sur les items du panneau REI (et ses favoris) ;</li>
- *   <li>glisser-deposer d'un item REI sur notre panneau lateral : ajout a la liste active.</li>
+ *   <li>glisser-deposer d'un item REI sur notre panneau lateral : ajout a la liste active. REI ne permet de
+ *   faire glisser que ses favoris (et les items des ecrans de recette), pas sa liste d'items principale ;</li>
+ *   <li>notre panneau lateral se place du cote oppose a la liste d'items de REI.</li>
  * </ul>
  */
 public class ItemListsReiPlugin implements REIClientPlugin {
 	public ItemListsReiPlugin() {
-		HoveredStacks.register((screen, mouseX, mouseY) -> {
-			EntryStack<?> stack = ScreenRegistry.getInstance().getFocusedStack(screen, new Point(mouseX, mouseY));
-			return toItemStack(stack);
-		});
+		// Item survole dans la liste d'items de REI ou dans ses favoris. (ScreenRegistry#getFocusedStack
+		// ne couvre que les slots du conteneur, pas l'overlay : il faut interroger l'overlay lui-meme.)
+		HoveredStacks.register((screen, mouseX, mouseY) -> REIRuntime.getInstance().getOverlay().map(overlay -> {
+			ItemStack fromList = toItemStack(overlay.getEntryList().getFocusedStack());
+			if (!fromList.isEmpty()) {
+				return fromList;
+			}
+			return overlay.getFavoritesList().map(favorites -> toItemStack(favorites.getFocusedStack())).orElse(ItemStack.EMPTY);
+		}).orElse(ItemStack.EMPTY));
+		// Notre panneau lateral se place du cote oppose a la liste d'items de REI.
+		ContainerOverlay.setViewerPanelSide(() -> ConfigObject.getInstance().isLeftHandSidePanel()
+				? ModConfig.PanelSide.LEFT : ModConfig.PanelSide.RIGHT);
 	}
 
 	@Override
@@ -63,8 +76,11 @@ public class ItemListsReiPlugin implements REIClientPlugin {
 			@Override
 			public DraggedAcceptorResult acceptDraggedStack(DraggingContext<AbstractContainerScreen<?>> context, DraggableStack stack) {
 				ScreenRectangle panel = ContainerOverlay.panelArea(context.getScreen());
-				Point mouse = context.getCurrentPosition();
-				if (panel == null || mouse == null || !panel.containsPoint(mouse.x, mouse.y)) {
+				// Position de la souris (getCurrentPosition() donne le coin de l'item deplace, pas le curseur).
+				Minecraft minecraft = Minecraft.getInstance();
+				int mouseX = (int) minecraft.mouseHandler.getScaledXPos(minecraft.getWindow());
+				int mouseY = (int) minecraft.mouseHandler.getScaledYPos(minecraft.getWindow());
+				if (panel == null || !panel.containsPoint(mouseX, mouseY)) {
 					return DraggedAcceptorResult.PASS;
 				}
 				ItemStack item = toItemStack(stack.getStack());

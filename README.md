@@ -41,7 +41,8 @@ Mod **Fabric 26.2**, **100 % client**, pour créer et suivre des listes d'items 
 ### Inventaires et conteneurs
 Dans l'inventaire et **tous** les écrans de conteneur (coffres, shulkers, ender chest, barils, menus de plugins…) :
 - bouton **livre** : menu des listes ; bouton **longue-vue** : panneau latéral de la liste active ;
-- touche `U` sur un item survolé (inventaire, REI, JEI) : ajout à la liste active. En jeu sans menu, `U` ajoute l'item tenu en main.
+- touche `N` sur un item survolé (inventaire, liste et favoris de REI/JEI) : ajout à la liste active. En jeu sans menu, `N` ajoute l'item tenu en main ;
+- le panneau se place à l'opposé de la liste d'items de REI/JEI (à droite sans eux), en évitant le livre de recettes. Réglable : auto, gauche, droite.
 
 ![Boutons et panneau latéral dans l'inventaire](docs/images/panneau-lateral.png)
 
@@ -58,11 +59,11 @@ Dans l'inventaire et **tous** les écrans de conteneur (coffres, shulkers, ender
 |---|---|
 | Ouvrir le menu des listes | `Y` |
 | Afficher/masquer le HUD | `H` |
-| Ajouter l'item survolé à la liste active | `U` |
+| Ajouter l'item survolé à la liste active | `N` |
 | Éditer le HUD | non assignée |
 | Panneau latéral (inventaires) | non assignée |
 
-Les touches par défaut évitent celles de Minecraft (O, P, L, G…) et de chunklimitcounter (K, J, L).
+Les touches par défaut évitent celles de Minecraft (O, P, L, G, C, X, chiffres…), de chunklimitcounter (K, J, L) et de REI/JEI dans les inventaires (R, U, A, Ctrl+O, Ctrl+F).
 
 ## Items custom (Nexo, ItemsAdder, Oraxen…)
 
@@ -135,11 +136,11 @@ minecraft:echo_shard;Éclat d'écho;32;vanilla
 
 | Mod | Version 26.2 | Intégration |
 |---|---|---|
-| REI | 26.2.821 | ✅ zones d'exclusion, touche « ajouter » sur l'item survolé (liste et favoris), glisser-déposer vers le panneau latéral |
-| JEI | 30.42.0.237 | ✅ mêmes fonctions (ingrédient « fantôme » déposé sur le panneau latéral) |
+| REI | 26.2.821 | ✅ zones d'exclusion, panneau placé à l'opposé de sa liste, touche `N` sur l'item survolé (liste et favoris), glisser-déposer **depuis ses favoris** vers le panneau latéral |
+| JEI | 30.42.0.237 | ✅ zones d'exclusion, panneau placé à l'opposé de sa liste, touche `N` (liste et favoris), glisser-déposer depuis sa liste (ingrédient « fantôme ») |
 | EMI | **aucune version 26.x** | ❌ désactivée (EMI s'arrête à 1.21.1) |
 
-REI et JEI n'affichent leur panneau que dans les écrans de conteneur. Le glisser-déposer se fait donc vers le **panneau latéral** de l'inventaire, pas vers le menu des listes.
+REI et JEI n'affichent leur panneau que dans les écrans de conteneur : le glisser-déposer se fait donc vers le **panneau latéral** de l'inventaire. REI ne permet pas de faire glisser les items de sa liste principale (seulement ses favoris et les écrans de recette) : utilisez la touche `N`, ou ajoutez l'item aux favoris REI (`A`) puis glissez-le.
 
 ## Fichiers
 ```

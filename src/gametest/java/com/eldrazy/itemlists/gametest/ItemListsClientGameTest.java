@@ -204,6 +204,7 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 		context.runOnClient(mc -> ItemListsClient.getInstance().config().sidePanelVisible = true);
 		context.waitTicks(5);
 		context.takeScreenshot("showcase_inventory_side_panel");
+		testViewerHoverKey(context);
 		// Panneau ouvert sans liste active : il doit rester visible avec une invitation a en choisir une.
 		ItemList active = context.computeOnClient(mc -> ItemListsClient.getInstance().lists().active());
 		context.runOnClient(mc -> ItemListsClient.getInstance().setActiveList(null));
@@ -241,6 +242,36 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 		context.takeScreenshot("showcase_settings");
 		context.setScreen(() -> null);
 		context.runOnClient(mc -> ItemListsClient.getInstance().config().discoverCustomItems = true);
+	}
+
+	/**
+	 * Avec REI ou JEI (./gradlew runClientGameTest -Pviewer=rei|jei) : survole un item de leur liste (bord droit
+	 * de l'ecran, notre panneau etant alors a gauche) et appuie sur la touche "ajouter" : la liste active doit grandir.
+	 */
+	private static void testViewerHoverKey(ClientGameTestContext context) {
+		boolean viewer = net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("roughlyenoughitems")
+				|| net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("jei");
+		if (!viewer) {
+			return;
+		}
+		context.takeScreenshot("showcase_viewer_panel_side");
+		int before = context.computeOnClient(mc -> ItemListsClient.getInstance().lists().active().entries().size());
+		// Un item de la liste REI / JEI : bord droit de l'ecran, a mi-hauteur (coordonnees fenetre).
+		context.getInput().setCursorPos(context.computeOnClient(mc -> (mc.getWindow().getGuiScaledWidth() - 14) * (double) mc.getWindow().getGuiScale()),
+				context.computeOnClient(mc -> mc.getWindow().getGuiScaledHeight() / 2.0 * mc.getWindow().getGuiScale()));
+		context.waitTicks(3);
+		context.takeScreenshot("showcase_viewer_hover");
+		context.getInput().pressKey(com.eldrazy.itemlists.client.ModKeyBindings.addHovered);
+		context.waitTicks(3);
+		int after = context.computeOnClient(mc -> ItemListsClient.getInstance().lists().active().entries().size());
+		if (after != before + 1) {
+			throw new AssertionError("La touche d'ajout sur un item REI/JEI n'a rien ajoute (" + before + " -> " + after + ")");
+		}
+		context.runOnClient(mc -> {
+			var list = ItemListsClient.getInstance().lists().active();
+			list.entries().remove(list.entries().size() - 1);
+			ItemListsClient.getInstance().lists().markDirty(list);
+		});
 	}
 
 	private static void switchLanguage(ClientGameTestContext context, String code) {

@@ -32,7 +32,9 @@ public class SettingsScreen extends BaseScreen {
 	protected void init() {
 		int x = (this.width - COLUMN_WIDTH) / 2;
 		int y = 40;
-		int step = BUTTON_HEIGHT + GAP;
+		// 7 boutons entre le titre et l'indication du bas : l'espacement se resserre sur les petits ecrans.
+		int available = this.height - MARGIN - BUTTON_HEIGHT - 16 - y;
+		int step = Math.max(BUTTON_HEIGHT + 1, Math.min(BUTTON_HEIGHT + GAP, available / 7));
 
 		y = toggle(x, y, "count_open_container", () -> config().countOpenContainer, v -> {
 			config().countOpenContainer = v;
@@ -41,6 +43,15 @@ public class SettingsScreen extends BaseScreen {
 		y = toggle(x, y, "discover_custom_items", () -> config().discoverCustomItems, v -> config().discoverCustomItems = v) + step;
 		y = toggle(x, y, "container_buttons", () -> config().showContainerButtons, v -> config().showContainerButtons = v) + step;
 		y = toggle(x, y, "hud_visible", () -> config().hud.visible, v -> config().hud.visible = v) + step;
+		this.addRenderableWidget(Button.builder(panelSideLabel(), b -> {
+			ModConfig.PanelSide[] sides = ModConfig.PanelSide.values();
+			config().sidePanelSide = sides[(config().sidePanelSide.ordinal() + 1) % sides.length];
+			ItemListsClient.getInstance().saveConfig();
+			b.setMessage(panelSideLabel());
+		}).bounds(x, y, COLUMN_WIDTH, BUTTON_HEIGHT)
+				.tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.translatable("gui.itemlists.settings.panel_side.tooltip")))
+				.build());
+		y += step;
 
 		this.addRenderableWidget(Button.builder(Component.translatable("gui.itemlists.settings.edit_hud"),
 				b -> this.minecraft.gui.setScreen(new HudEditScreen(this)))
@@ -65,6 +76,12 @@ public class SettingsScreen extends BaseScreen {
 				.build();
 		this.addRenderableWidget(button);
 		return y;
+	}
+
+	private Component panelSideLabel() {
+		String side = config().sidePanelSide.name().toLowerCase(java.util.Locale.ROOT);
+		return CommonComponents.optionNameValue(Component.translatable("gui.itemlists.settings.panel_side"),
+				Component.translatable("gui.itemlists.settings.panel_side." + side));
 	}
 
 	private static Component label(Component name, boolean value) {
