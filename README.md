@@ -13,7 +13,9 @@ Mod **Fabric 26.2**, **100 % client**, pour créer et suivre des listes d'items 
 ## Installation
 
 1. Installer Fabric Loader pour Minecraft 26.2 et Fabric API.
-2. Copier `itemlists-x.y.z.jar` dans le dossier `mods/`.
+2. Télécharger `itemlists-x.y.z.jar` depuis les [releases](https://github.com/Eldrazy-Git/Item_lists/releases) et le copier dans le dossier `mods/`.
+
+Nouveautés de chaque version : [CHANGELOG.md](CHANGELOG.md).
 
 ## Fonctionnalités
 
