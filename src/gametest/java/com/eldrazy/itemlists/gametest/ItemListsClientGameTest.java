@@ -32,9 +32,13 @@ import com.eldrazy.itemlists.identity.ItemIdentity;
  * Lancer avec {@code ./gradlew runClientGameTest}.
  */
 public class ItemListsClientGameTest implements FabricClientGameTest {
-	/** Configuration des captures "vitrine" (celle du client de dev de reference). */
-	static final int SHOWCASE_WIDTH = 3840;
-	static final int SHOWCASE_HEIGHT = 2089;
+	/**
+	 * Configuration des captures "vitrine" : echelle d'interface et panneau du client de dev de reference
+	 * (ecran 3840x2089, echelle 3), mais fenetre deux fois plus petite. L'interface garde exactement la meme
+	 * taille en pixels et occupe une plus grande part de l'image (lisible sur GitHub, sans reduction).
+	 */
+	static final int SHOWCASE_WIDTH = 1920;
+	static final int SHOWCASE_HEIGHT = 1045;
 	static final int SHOWCASE_GUI_SCALE = 3;
 	static final com.eldrazy.itemlists.config.ModConfig.PanelSide SHOWCASE_PANEL_SIDE = com.eldrazy.itemlists.config.ModConfig.PanelSide.RIGHT;
 	static final String NEXO_RUBY = "paper[custom_data={PublicBukkitValues:{\"nexo:id\":\"ruby\"}},item_model=\"minecraft:emerald\",custom_name={\"text\":\"Rubis\",\"italic\":false}]";
@@ -196,8 +200,7 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 			lists.create("Portail de l'End");
 			lists.saveAll();
 		});
-		// Meme configuration que le client de reference : fenetre maximisee 3840x2089, interface a l'echelle 3,
-		// panneau de la liste a droite (les images sont ensuite reduites de moitie pour la doc).
+		// Echelle d'interface et position du panneau du client de reference (voir SHOWCASE_*).
 		context.getInput().resizeWindow(SHOWCASE_WIDTH, SHOWCASE_HEIGHT);
 		context.runOnClient(mc -> {
 			mc.options.guiScale().set(SHOWCASE_GUI_SCALE);
