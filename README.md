@@ -45,7 +45,9 @@ Dans l'inventaire et **tous** les écrans de conteneur (coffres, shulkers, ender
 - touche `N` sur un item survolé (inventaire, liste et favoris de REI/JEI) : ajout à la liste active. En jeu sans menu, `N` ajoute l'item tenu en main ;
 - en position auto, le panneau se place à l'opposé de la liste d'items de REI/JEI (à droite sans eux), en évitant le livre de recettes. En position « dessous », il s'étale sur plusieurs colonnes sous l'inventaire (retour sur le côté s'il manque de place).
 
-![Boutons et panneau latéral dans l'inventaire](docs/images/panneau-lateral.png)
+| Panneau sur le côté | Panneau dessous, quantité en cours de saisie |
+|---|---|
+| ![Boutons et panneau latéral dans l'inventaire](docs/images/panneau-lateral.png) | ![Panneau sous l'inventaire, édition d'une quantité](docs/images/panneau-dessous-edition.png) |
 
 ### HUD (touche `H` pour afficher/masquer, `/itemlists hud` pour l'éditer)
 - Même style que *chunklimitcounter* : panneau sombre aux coins rabotés, palette vert / jaune / rouge (complet / partiel / manquant), barre de progression fine.

@@ -269,6 +269,8 @@ Le mod se greffe sur **tout** écran de conteneur (`AbstractContainerScreen`) : 
 
 Les touches `N` (ajouter l'item survolé) et panneau latéral sont ignorées pendant la saisie dans un champ texte, comme la recherche de l'inventaire créatif.
 
+![Panneau sous l'inventaire, édition d'une quantité](images/panneau-dessous-edition.png)
+
 ### Réglages
 
 ![Réglages](images/reglages.png)

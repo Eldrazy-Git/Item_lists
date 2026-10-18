@@ -191,7 +191,12 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 			lists.create("Portail de l'End");
 			lists.saveAll();
 		});
-		context.getInput().resizeWindow(1280, 720);
+		// Equivalent d'un plein ecran Full HD avec une interface reduite (echelle 2) : les menus ne prennent pas tout l'ecran.
+		context.getInput().resizeWindow(1920, 1080);
+		context.runOnClient(mc -> {
+			mc.options.guiScale().set(2);
+			mc.resizeGui();
+		});
 		context.waitTicks(40);
 		context.runOnClient(mc -> {
 			mc.gui.toastManager().clear();
@@ -242,7 +247,11 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 		context.waitTicks(5);
 		context.takeScreenshot("showcase_settings");
 		context.setScreen(() -> null);
-		context.runOnClient(mc -> ItemListsClient.getInstance().config().discoverCustomItems = true);
+		context.runOnClient(mc -> {
+			ItemListsClient.getInstance().config().discoverCustomItems = true;
+			mc.options.guiScale().set(0);
+			mc.resizeGui();
+		});
 	}
 
 	/**
@@ -280,12 +289,7 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 	 * molette sur la quantite : +1. L'inventaire doit etre ouvert avec le panneau visible.
 	 */
 	private static void testPanelEditing(ClientGameTestContext context) {
-		// Interface x2 (640x360) : assez de hauteur sous l'inventaire pour la position "dessous".
-		context.runOnClient(mc -> {
-			mc.options.guiScale().set(2);
-			mc.resizeGui();
-			ItemListsClient.getInstance().config().sidePanelSide = com.eldrazy.itemlists.config.ModConfig.PanelSide.BELOW;
-		});
+		context.runOnClient(mc -> ItemListsClient.getInstance().config().sidePanelSide = com.eldrazy.itemlists.config.ModConfig.PanelSide.BELOW);
 		context.waitTicks(3);
 		context.takeScreenshot("showcase_panel_below");
 		int[] cell = context.computeOnClient(mc -> {
@@ -322,8 +326,6 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 			active.entries().get(0).setTarget(original);
 			ItemListsClient.getInstance().lists().markDirty(active);
 			ItemListsClient.getInstance().config().sidePanelSide = com.eldrazy.itemlists.config.ModConfig.PanelSide.AUTO;
-			mc.options.guiScale().set(0);
-			mc.resizeGui();
 		});
 	}
 
