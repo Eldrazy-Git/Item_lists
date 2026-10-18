@@ -12,7 +12,8 @@ import net.minecraft.nbt.Tag;
  *   <li>Nexo : {@code PublicBukkitValues."nexo:id"} = "ruby"</li>
  *   <li>Oraxen : {@code PublicBukkitValues."oraxen:id"} = "ruby"</li>
  *   <li>ItemsAdder : {@code itemsadder: { namespace: "mon_pack", id: "ruby" }}</li>
- *   <li>MythicMobs / Crucible : {@code MYTHIC_TYPE} = "RubySword"</li>
+ *   <li>MythicMobs / Crucible : {@code PublicBukkitValues."mythicmobs:type"} = "elytreum_sword"
+ *   (ancien format : {@code MYTHIC_TYPE} a la racine)</li>
  *   <li>MMOItems : {@code MMOITEMS_ITEM_TYPE} = "SWORD" + {@code MMOITEMS_ITEM_ID} = "RUBY_SWORD"</li>
  * </ul>
  * Les cles Bukkit (PersistentDataContainer) sont rangees sous "PublicBukkitValues" depuis 1.20.5.
@@ -56,11 +57,18 @@ public final class CustomDataReaders {
 		return (namespace == null ? "itemsadder" : namespace) + ":" + id;
 	}
 
+	/**
+	 * MythicMobs / Crucible : les versions recentes rangent le type dans PublicBukkitValues."mythicmobs:type"
+	 * (verifie sur un vrai serveur), les anciennes dans MYTHIC_TYPE a la racine du custom_data.
+	 */
 	public static String mythicId(CompoundTag customData) {
 		if (customData == null) {
 			return null;
 		}
-		String type = nonBlank(customData.getStringOr("MYTHIC_TYPE", null));
+		String type = bukkitString(customData, "mythicmobs:type");
+		if (type == null) {
+			type = nonBlank(customData.getStringOr("MYTHIC_TYPE", null));
+		}
 		return type == null ? null : "mythicmobs:" + type;
 	}
 

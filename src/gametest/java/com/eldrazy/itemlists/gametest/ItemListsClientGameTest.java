@@ -46,6 +46,9 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 	static final String ORAXEN_GEM = "paper[custom_data={PublicBukkitValues:{\"oraxen:id\":\"gem\"}}]";
 	static final String MODEL_ONLY = "paper[item_model=\"minecraft:diamond\"]";
 	static final String ANVIL_RENAMED = "diamond[custom_name=\"Mon diamant\"]";
+	/** Arme MythicMobs / Crucible telle qu'envoyee par un vrai serveur (type dans PublicBukkitValues). */
+	static final String CRUCIBLE_SWORD = "netherite_sword[custom_data={PublicBukkitValues:{\"mythicmobs:type\":\"elytreum_sword\","
+			+ "\"mythicmobs:prevent_crafting_with\":1b,\"ecoenchants:ecoenchantlore-skip\":0}},custom_model_data={floats:[10000f]}]";
 	/** Shulker contenant 64 diamants et un bundle de 4 rubis Nexo (bundle dans shulker). */
 	static final String SHULKER = "shulker_box[container=[{slot:0,item:{id:\"diamond\",count:64}},"
 			+ "{slot:1,item:{id:\"bundle\",count:1,components:{\"minecraft:bundle_contents\":[{id:\"paper\",count:4,"
@@ -68,6 +71,7 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 			give(world, ANVIL_RENAMED, 1);
 			give(world, "diamond", 10);
 			give(world, SHULKER, 1);
+			give(world, CRUCIBLE_SWORD, 1);
 			context.waitTicks(10);
 
 			testIdentities(context);
@@ -102,7 +106,8 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 				"minecraft:paper#diamond/autre/item_model",
 				"minecraft:diamond/vanilla/vanilla",
 				"minecraft:diamond/vanilla/vanilla",
-				"minecraft:shulker_box/vanilla/vanilla"));
+				"minecraft:shulker_box/vanilla/vanilla",
+				"mythicmobs:elytreum_sword/autre/mythicmobs"));
 	}
 
 	private static String describe(ItemStack stack) {

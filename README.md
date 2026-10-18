@@ -79,7 +79,7 @@ Les items custom sont des items vanilla portant des data components. Des **extra
 | nexo | `custom_data.PublicBukkitValues."nexo:id"` | `nexo:<id>` |
 | oraxen | `custom_data.PublicBukkitValues."oraxen:id"` | `oraxen:<id>` |
 | itemsadder | `custom_data.itemsadder.{namespace,id}` | `<namespace>:<id>` |
-| mythicmobs | `custom_data.MYTHIC_TYPE` | `mythicmobs:<type>` |
+| mythicmobs | `custom_data.PublicBukkitValues."mythicmobs:type"` (ou l'ancien `MYTHIC_TYPE`) | `mythicmobs:<type>` |
 | mmoitems | `custom_data.MMOITEMS_ITEM_TYPE` + `MMOITEMS_ITEM_ID` | `mmoitems:<type>/<id>` |
 | bukkit | toute clé texte `PublicBukkitValues."<plugin>:id"` | `<plugin>:<valeur>` |
 | item_model | `minecraft:item_model` différent du modèle vanilla | l'id du modèle (ex. `pack:ruby`), ou `minecraft:paper#diamond` si c'est un modèle vanilla |

@@ -50,6 +50,13 @@ class CustomDataReadersTest {
 		mythic.putString("MYTHIC_TYPE", "KingsCrown");
 		assertEquals("mythicmobs:KingsCrown", CustomDataReaders.mythicId(mythic));
 
+		// Format actuel, releve sur un vrai serveur (armures / outils Crucible).
+		CompoundTag crucible = bukkit("mythicmobs:type", "elytreum_sword");
+		crucible.getCompoundOrEmpty(CustomDataReaders.BUKKIT_VALUES).putByte("mythicmobs:prevent_crafting_with", (byte) 1);
+		crucible.getCompoundOrEmpty(CustomDataReaders.BUKKIT_VALUES).putInt("ecoenchants:ecoenchantlore-skip", 0);
+		assertEquals("mythicmobs:elytreum_sword", CustomDataReaders.mythicId(crucible));
+		assertNull(CustomDataReaders.mythicId(bukkit("mythicmobs:prevent_crafting_with", "x")));
+
 		CompoundTag mmo = new CompoundTag();
 		mmo.putString("MMOITEMS_ITEM_TYPE", "SWORD");
 		mmo.putString("MMOITEMS_ITEM_ID", "RUBY_SWORD");
