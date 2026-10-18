@@ -32,6 +32,11 @@ import com.eldrazy.itemlists.identity.ItemIdentity;
  * Lancer avec {@code ./gradlew runClientGameTest}.
  */
 public class ItemListsClientGameTest implements FabricClientGameTest {
+	/** Configuration des captures "vitrine" (celle du client de dev de reference). */
+	static final int SHOWCASE_WIDTH = 3840;
+	static final int SHOWCASE_HEIGHT = 2089;
+	static final int SHOWCASE_GUI_SCALE = 3;
+	static final com.eldrazy.itemlists.config.ModConfig.PanelSide SHOWCASE_PANEL_SIDE = com.eldrazy.itemlists.config.ModConfig.PanelSide.RIGHT;
 	static final String NEXO_RUBY = "paper[custom_data={PublicBukkitValues:{\"nexo:id\":\"ruby\"}},item_model=\"minecraft:emerald\",custom_name={\"text\":\"Rubis\",\"italic\":false}]";
 	static final String IA_SHARD = "paper[custom_data={itemsadder:{namespace:\"citadelle\",id:\"etherium_shard\"}},item_model=\"minecraft:amethyst_shard\",item_name=\"Éclat d'Etherium\"]";
 	static final String ORAXEN_GEM = "paper[custom_data={PublicBukkitValues:{\"oraxen:id\":\"gem\"}}]";
@@ -191,11 +196,13 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 			lists.create("Portail de l'End");
 			lists.saveAll();
 		});
-		// Equivalent d'un plein ecran Full HD avec une interface reduite (echelle 2) : les menus ne prennent pas tout l'ecran.
-		context.getInput().resizeWindow(1920, 1080);
+		// Meme configuration que le client de reference : fenetre maximisee 3840x2089, interface a l'echelle 3,
+		// panneau de la liste a droite (les images sont ensuite reduites de moitie pour la doc).
+		context.getInput().resizeWindow(SHOWCASE_WIDTH, SHOWCASE_HEIGHT);
 		context.runOnClient(mc -> {
-			mc.options.guiScale().set(2);
+			mc.options.guiScale().set(SHOWCASE_GUI_SCALE);
 			mc.resizeGui();
+			ItemListsClient.getInstance().config().sidePanelSide = SHOWCASE_PANEL_SIDE;
 		});
 		context.waitTicks(40);
 		context.runOnClient(mc -> {
@@ -230,6 +237,9 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 		context.runOnClient(mc -> ItemListsClient.getInstance().config().sidePanelVisible = false);
 		context.setScreen(() -> null);
 		world.getServer().runCommand("gamemode survival ItemListsDev");
+		context.waitTicks(2);
+		// Pas de messages "mode de jeu change" dans les captures suivantes.
+		context.runOnClient(mc -> mc.gui.hud.getChat().clearMessages(false));
 
 		context.setScreen(() -> new ListsScreen(null));
 		context.waitTicks(5);
@@ -291,13 +301,16 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 	private static void testPanelEditing(ClientGameTestContext context) {
 		context.runOnClient(mc -> ItemListsClient.getInstance().config().sidePanelSide = com.eldrazy.itemlists.config.ModConfig.PanelSide.BELOW);
 		context.waitTicks(3);
-		context.takeScreenshot("showcase_panel_below");
+		context.takeScreenshot("test_panel_below");
+		// L'edition se fait (et se photographie) dans la position de la configuration de reference.
+		context.runOnClient(mc -> ItemListsClient.getInstance().config().sidePanelSide = SHOWCASE_PANEL_SIDE);
+		context.waitTicks(3);
 		int[] cell = context.computeOnClient(mc -> {
 			var screen = (net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?>) mc.gui.screen();
 			var area = com.eldrazy.itemlists.client.inventory.ContainerOverlay.layout(screen).area();
 			int scale = mc.getWindow().getGuiScale();
 			// Premiere case : un peu apres l'icone, puis tout a droite de la case (zone de la quantite).
-			return new int[] {(area.left() + 30) * scale, (area.top() + 22 + 8) * scale, (area.left() + 140) * scale};
+			return new int[] {(area.left() + 30) * scale, (area.top() + 22 + 8) * scale, (area.left() + Math.min(140, area.width() - 12)) * scale};
 		});
 		ItemList active = context.computeOnClient(mc -> ItemListsClient.getInstance().lists().active());
 		int original = active.entries().get(0).target();
@@ -325,7 +338,7 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 		context.runOnClient(mc -> {
 			active.entries().get(0).setTarget(original);
 			ItemListsClient.getInstance().lists().markDirty(active);
-			ItemListsClient.getInstance().config().sidePanelSide = com.eldrazy.itemlists.config.ModConfig.PanelSide.AUTO;
+			ItemListsClient.getInstance().config().sidePanelSide = SHOWCASE_PANEL_SIDE;
 		});
 	}
 
