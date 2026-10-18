@@ -8,7 +8,7 @@ Mod **Fabric 26.2**, **100 % client**, pour créer et suivre des listes d'items 
 
 📖 **Fonctionnement détaillé** (reconnaissance des items custom, comptage, fichiers, architecture, dépannage) : [docs/FONCTIONNEMENT.md](docs/FONCTIONNEMENT.md)
 
-![HUD de la liste active](docs/images/hud.png)
+![HUD de la liste active](docs/images/hud-v4.png)
 
 ## Installation
 
@@ -29,14 +29,14 @@ Mod **Fabric 26.2**, **100 % client**, pour créer et suivre des listes d'items 
 - Recherche (nom, id, `@namespace`), tri (ordre, nom, progression, manquants, quantité).
 - Import / export JSON et CSV, réglages.
 
-![Menu des listes](docs/images/menu-listes.png)
+![Menu des listes](docs/images/menu-listes-v4.png)
 
 ### Catalogue (« Ajouter… »)
 - Tous les items vanilla + les **items custom découverts** sur le serveur courant.
 - Recherche `nom`, `id` ou `@nexo`, filtres par source (vanilla, custom, Nexo, ItemsAdder, Oraxen, autre) et par onglet créatif.
 - Clic : +1 pile · Maj+clic : +1 · clic droit : retirer.
 
-![Catalogue](docs/images/catalogue.png)
+![Catalogue](docs/images/catalogue-v4.png)
 
 ### Inventaires et conteneurs
 Dans l'inventaire et **tous** les écrans de conteneur (coffres, shulkers, ender chest, barils, menus de plugins…) :
@@ -47,7 +47,7 @@ Dans l'inventaire et **tous** les écrans de conteneur (coffres, shulkers, ender
 
 | Panneau de la liste active | Quantité en cours de saisie dans le panneau |
 |---|---|
-| ![Boutons et panneau latéral dans l'inventaire](docs/images/panneau-lateral.png) | ![Édition d'une quantité dans le panneau](docs/images/panneau-edition.png) |
+| ![Boutons et panneau latéral dans l'inventaire](docs/images/panneau-lateral-v4.png) | ![Édition d'une quantité dans le panneau](docs/images/panneau-edition-v4.png) |
 
 ### HUD (touche `H` pour afficher/masquer, `/itemlists hud` pour l'éditer)
 - Même style que *chunklimitcounter* : panneau sombre aux coins rabotés, palette vert / jaune / rouge (complet / partiel / manquant), barre de progression fine.
@@ -55,7 +55,7 @@ Dans l'inventaire et **tous** les écrans de conteneur (coffres, shulkers, ender
 - Éditeur : glisser-déposer n'importe où, ancrage automatique sur le point le plus proche (4 coins, 4 bords, centre), échelle, opacité du fond et du texte, nombre de lignes, mode compact, masquer les items complétés, barres on/off.
 - Le HUD se masque sous les menus (le panneau latéral prend le relais dans les inventaires).
 
-![Éditeur du HUD](docs/images/editeur-hud.png)
+![Éditeur du HUD](docs/images/editeur-hud-v4.png)
 
 ### Touches (Options › Commandes › Item Lists)
 | Action | Défaut |

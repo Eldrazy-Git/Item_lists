@@ -61,11 +61,11 @@ Le cycle général :
 
 | Menu des listes | Catalogue |
 |---|---|
-| ![Menu des listes](images/menu-listes.png) | ![Catalogue](images/catalogue.png) |
+| ![Menu des listes](images/menu-listes-v4.png) | ![Catalogue](images/catalogue-v4.png) |
 
 | HUD | Panneau latéral dans l'inventaire |
 |---|---|
-| ![HUD](images/hud.png) | ![Panneau latéral](images/panneau-lateral.png) |
+| ![HUD](images/hud-v4.png) | ![Panneau latéral](images/panneau-lateral-v4.png) |
 
 ---
 
@@ -192,7 +192,7 @@ La liste active est mémorisée dans `config/itemlists/config.json` (`activeList
 
 ## 6. Import et export
 
-![Écran d'import](images/import.png)
+![Écran d'import](images/import-v4.png)
 
 ### Import
 
@@ -241,7 +241,7 @@ Il est rendu via l'API `HudElementRegistry` de Fabric. Il se masque :
 - avec F1 ;
 - sous les menus (sauf le chat), le panneau latéral prenant alors le relais.
 
-![Éditeur du HUD](images/editeur-hud.png)
+![Éditeur du HUD](images/editeur-hud-v4.png)
 
 L'**éditeur** (`/itemlists hud`, Réglages, ou une touche à assigner) affiche un aperçu réel à déplacer à la souris :
 - **Ancrage** : au relâchement, le HUD s'ancre au point le plus proche parmi 9 (coins, milieux des bords, centre). Sa position est mémorisée comme un décalage par rapport à ce point, si bien qu'il reste en place quand la fenêtre change de taille, et il est toujours ramené dans l'écran.
@@ -269,11 +269,11 @@ Le mod se greffe sur **tout** écran de conteneur (`AbstractContainerScreen`) : 
 
 Les touches `N` (ajouter l'item survolé) et panneau latéral sont ignorées pendant la saisie dans un champ texte, comme la recherche de l'inventaire créatif.
 
-![Édition d'une quantité dans le panneau](images/panneau-edition.png)
+![Édition d'une quantité dans le panneau](images/panneau-edition-v4.png)
 
 ### Réglages
 
-![Réglages](images/reglages.png)
+![Réglages](images/reglages-v4.png)
 
 Pas de Cloth Config ni de Mod Menu : l'écran de réglages est intégré et la configuration est un simple JSON (`config/itemlists/config.json`), comme dans chunklimitcounter.
 
