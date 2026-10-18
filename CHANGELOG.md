@@ -9,7 +9,7 @@ Toutes les évolutions notables d'Item Lists sont listées ici.
   - potions, potions jetables / persistantes et flèches à effet : `minecraft:potion[minecraft:fire_resistance]`, `minecraft:tipped_arrow[minecraft:long_swiftness]` (composant `potion_contents`) ;
   - livres enchantés : `minecraft:enchanted_book[minecraft:sharpness=5]`, plusieurs enchantements triés et séparés par des virgules (composant `stored_enchantments`).
   
-  Chaque variante est comptée séparément, a sa propre icône et son nom (« Livre enchanté (Tranchant V) »), et le catalogue propose toutes les variantes des onglets créatifs.
+  Chaque variante est comptée séparément, a sa propre icône et son nom (« Livre enchanté (Tranchant V) »), et le catalogue propose toutes les variantes : toutes les potions et flèches des onglets créatifs, et **chaque livre enchanté à tous ses niveaux** (Tranchant I à V…), y compris les enchantements ajoutés par le serveur (datapacks, EcoEnchants…).
 
 ### À faire après la mise à jour
 - Une entrée `minecraft:potion`, `minecraft:tipped_arrow` ou `minecraft:enchanted_book` sans variante ne compte plus que les items sans composant : remplacez-la par la variante voulue depuis le catalogue.

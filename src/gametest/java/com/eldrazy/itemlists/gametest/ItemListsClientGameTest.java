@@ -236,6 +236,17 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 		expect(context.computeOnClient(mc -> ItemListsClient.getInstance().tracker().count("minecraft:tipped_arrow")), 0L);
 		expect(context.computeOnClient(mc -> com.eldrazy.itemlists.identity.VanillaVariants.label(
 				com.eldrazy.itemlists.client.ItemDisplay.stackFor("minecraft:enchanted_book[minecraft:sharpness=5]"))).startsWith("Enchanted Book ("), true);
+		// Catalogue : tous les niveaux de chaque livre (les onglets creatifs n'ont que le niveau maximum).
+		java.util.Set<String> catalog = context.computeOnClient(mc -> {
+			java.util.Set<String> set = new java.util.HashSet<>();
+			com.eldrazy.itemlists.client.CatalogData.build().forEach(entry -> set.add(entry.id()));
+			return set;
+		});
+		for (String book : new String[] {"sharpness=1", "sharpness=3", "sharpness=5", "protection=1", "protection=4", "mending=1", "unbreaking=2"}) {
+			expect(catalog.contains("minecraft:enchanted_book[minecraft:" + book + "]"), true);
+		}
+		expect(catalog.contains("minecraft:potion[minecraft:strong_healing]"), true);
+		expect(catalog.contains("minecraft:tipped_arrow[minecraft:long_swiftness]"), true);
 		world.getServer().runCommand("clear ItemListsDev");
 		context.waitTicks(5);
 	}

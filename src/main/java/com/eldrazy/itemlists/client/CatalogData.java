@@ -18,6 +18,12 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 
 import com.eldrazy.itemlists.ItemListsClient;
 import com.eldrazy.itemlists.data.CustomItemCache;
@@ -49,7 +55,7 @@ public final class CatalogData {
 		Map<String, Entry> entries = new LinkedHashMap<>();
 		// 1) Ordre et variantes des onglets creatifs (un seul stack par identite).
 		for (CreativeModeTab tab : categoryTabs()) {
-			for (ItemStack stack : tab.getDisplayItems()) {
+			for (ItemStack stack : withAllBookLevels(tab.getDisplayItems())) {
 				// Une entree par variante (potion de soin, livre Tranchant V...), un seul stack pour le reste.
 				String variant = VanillaVariants.variantId(stack);
 				String id = variant != null ? variant : IdentityRegistry.vanillaId(stack);
@@ -84,6 +90,30 @@ public final class CatalogData {
 			result.add(new Entry(item.id, stack, item.label, item.source, Set.of()));
 		}
 		result.addAll(entries.values());
+		return result;
+	}
+
+	/**
+	 * Les onglets creatifs ne montrent que les livres enchantes au niveau maximum (tous les niveaux ne sont que
+	 * dans l'onglet de recherche) : chaque livre a un seul enchantement est remplace par tous ses niveaux, du
+	 * minimum au maximum, a la meme place. Les enchantements ajoutes par le serveur (datapacks, EcoEnchants...)
+	 * font partie du registre synchronise et sont donc inclus.
+	 */
+	private static List<ItemStack> withAllBookLevels(Collection<ItemStack> stacks) {
+		List<ItemStack> result = new ArrayList<>(stacks.size());
+		for (ItemStack stack : stacks) {
+			ItemEnchantments stored = stack.is(Items.ENCHANTED_BOOK) ? stack.get(DataComponents.STORED_ENCHANTMENTS) : null;
+			if (stored == null || stored.size() != 1) {
+				result.add(stack);
+				continue;
+			}
+			Holder<Enchantment> enchantment = stored.keySet().iterator().next();
+			int min = enchantment.value().getMinLevel();
+			int max = Math.max(min, enchantment.value().getMaxLevel());
+			for (int level = min; level <= max; level++) {
+				result.add(EnchantmentHelper.createBook(new EnchantmentInstance(enchantment, level)));
+			}
+		}
 		return result;
 	}
 
