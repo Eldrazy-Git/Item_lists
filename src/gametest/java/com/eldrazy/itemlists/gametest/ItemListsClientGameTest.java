@@ -204,7 +204,25 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 		context.runOnClient(mc -> ItemListsClient.getInstance().config().sidePanelVisible = true);
 		context.waitTicks(5);
 		context.takeScreenshot("showcase_inventory_side_panel");
+		// Panneau ouvert sans liste active : il doit rester visible avec une invitation a en choisir une.
+		ItemList active = context.computeOnClient(mc -> ItemListsClient.getInstance().lists().active());
+		context.runOnClient(mc -> ItemListsClient.getInstance().setActiveList(null));
+		context.waitTicks(5);
+		context.takeScreenshot("showcase_side_panel_no_active");
+		context.runOnClient(mc -> ItemListsClient.getInstance().setActiveList(active));
 		context.runOnClient(mc -> ItemListsClient.getInstance().config().sidePanelVisible = false);
+
+		// Inventaire creatif (onglets au-dessus, boutons sur le cote) avec le panneau ouvert.
+		world.getServer().runCommand("gamemode creative ItemListsDev");
+		context.waitTicks(5);
+		context.runOnClient(mc -> ItemListsClient.getInstance().config().sidePanelVisible = true);
+		context.setScreen(() -> new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(
+				context.computeOnClient(mc -> mc.player), context.computeOnClient(mc -> mc.player.connection.enabledFeatures()), false));
+		context.waitTicks(10);
+		context.takeScreenshot("showcase_creative_side_panel");
+		context.runOnClient(mc -> ItemListsClient.getInstance().config().sidePanelVisible = false);
+		context.setScreen(() -> null);
+		world.getServer().runCommand("gamemode survival ItemListsDev");
 
 		context.setScreen(() -> new ListsScreen(null));
 		context.waitTicks(5);

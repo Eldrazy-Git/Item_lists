@@ -80,7 +80,16 @@ public final class ContainerOverlay {
 		ScreenEvents.beforeExtract(screen).register((s, graphics, mouseX, mouseY, delta) -> positionButtons(screen, buttons));
 		ScreenEvents.afterExtract(screen).register((s, graphics, mouseX, mouseY, delta) -> renderPanel(screen, graphics, mouseX, mouseY));
 
-		ScreenMouseEvents.allowMouseClick(screen).register((s, event) -> !isOverPanel(screen, event.x(), event.y()));
+		ScreenMouseEvents.allowMouseClick(screen).register((s, event) -> {
+			if (!isOverPanel(screen, event.x(), event.y())) {
+				return true;
+			}
+			// Panneau sans liste active : un clic ouvre le menu pour en choisir une.
+			if (ItemListsClient.getInstance().lists().active() == null) {
+				client.gui.setScreen(new ListsScreen(screen));
+			}
+			return false;
+		});
 		ScreenMouseEvents.allowMouseScroll(screen).register((s, mouseX, mouseY, scrollX, scrollY) -> {
 			if (isOverPanel(screen, mouseX, mouseY)) {
 				panelScroll -= (int) (Math.signum(scrollY) * PANEL_ROW_HEIGHT);
@@ -153,15 +162,19 @@ public final class ContainerOverlay {
 		}
 	}
 
-	/** Zone du panneau lateral, ou null s'il est ferme / sans liste active. */
+	/**
+	 * Zone du panneau lateral, ou null s'il est ferme. Sans liste active, le panneau reste affiche
+	 * (avec une invitation a en choisir une) : sinon le bouton semblerait ne rien faire.
+	 */
 	public static ScreenRectangle panelArea(AbstractContainerScreen<?> screen) {
-		ItemList list = ItemListsClient.getInstance().lists().active();
-		if (!config().sidePanelVisible || list == null) {
+		if (!config().sidePanelVisible) {
 			return null;
 		}
+		ItemList list = ItemListsClient.getInstance().lists().active();
 		int top = screen.topPos;
 		// Hauteur ajustee au contenu (bornee a celle de la GUI) pour laisser de la place a REI / JEI.
-		int content = PANEL_HEADER + Math.max(1, list.entries().size()) * PANEL_ROW_HEIGHT + 4;
+		int rows = list == null ? 2 : Math.max(1, list.entries().size());
+		int content = PANEL_HEADER + rows * PANEL_ROW_HEIGHT + 4;
 		int height = Math.min(screen.imageHeight, content);
 		int rightX = screen.leftPos + screen.imageWidth + PANEL_GAP;
 		int rightSpace = screen.width - rightX - PANEL_GAP;
@@ -210,12 +223,21 @@ public final class ContainerOverlay {
 		}
 		ItemList list = ItemListsClient.getInstance().lists().active();
 		Font font = Minecraft.getInstance().font;
-		List<EntryRows.Row> rows = PanelRows.rows(list);
 		int x = area.left();
 		int y = area.top();
 		int width = area.width();
 		int height = area.height();
 		Theme.panel(graphics, x, y, width, height, 0xD0, false);
+
+		if (list == null) {
+			boolean hovered = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
+			graphics.text(font, Component.translatable("gui.itemlists.button.open_lists"), x + PANEL_PADDING, y + 6, Theme.COLOR_TEXT);
+			graphics.horizontalLine(x + PANEL_PADDING, x + width - PANEL_PADDING - 1, y + PANEL_HEADER - 4, Theme.COLOR_DIVIDER);
+			graphics.textWithWordWrap(font, Component.translatable("gui.itemlists.panel.no_active"), x + PANEL_PADDING, y + PANEL_HEADER,
+					width - 2 * PANEL_PADDING, hovered ? Theme.COLOR_PARTIAL : Theme.COLOR_SUBTITLE);
+			return;
+		}
+		List<EntryRows.Row> rows = PanelRows.rows(list);
 
 		long complete = rows.stream().filter(EntryRows.Row::complete).count();
 		String summary = complete + "/" + rows.size();

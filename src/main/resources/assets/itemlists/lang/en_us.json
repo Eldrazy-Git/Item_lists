@@ -107,6 +107,7 @@
 
 	"gui.itemlists.button.open_lists": "Item Lists",
 	"gui.itemlists.button.side_panel": "Show/hide the active list",
+	"gui.itemlists.panel.no_active": "No active list: click here to pick one.",
 
 	"gui.itemlists.settings.title": "Item Lists settings",
 	"gui.itemlists.settings.count_open_container": "Count the open container",
