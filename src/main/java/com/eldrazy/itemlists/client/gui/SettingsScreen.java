@@ -32,15 +32,16 @@ public class SettingsScreen extends BaseScreen {
 	protected void init() {
 		int x = (this.width - COLUMN_WIDTH) / 2;
 		int y = 40;
-		// 7 boutons entre le titre et l'indication du bas : l'espacement se resserre sur les petits ecrans.
+		// 8 boutons entre le titre et l'indication du bas : l'espacement se resserre sur les petits ecrans.
 		int available = this.height - MARGIN - BUTTON_HEIGHT - 16 - y;
-		int step = Math.max(BUTTON_HEIGHT + 1, Math.min(BUTTON_HEIGHT + GAP, available / 7));
+		int step = Math.max(BUTTON_HEIGHT + 1, Math.min(BUTTON_HEIGHT + GAP, available / 8));
 
 		y = toggle(x, y, "count_open_container", () -> config().countOpenContainer, v -> {
 			config().countOpenContainer = v;
 			ItemListsClient.getInstance().tracker().forceRecount();
 		}) + step;
 		y = toggle(x, y, "discover_custom_items", () -> config().discoverCustomItems, v -> config().discoverCustomItems = v) + step;
+		y = toggle(x, y, "discover_in_menus", () -> config().discoverInMenus, v -> config().discoverInMenus = v) + step;
 		y = toggle(x, y, "container_buttons", () -> config().showContainerButtons, v -> config().showContainerButtons = v) + step;
 		y = toggle(x, y, "hud_visible", () -> config().hud.visible, v -> config().hud.visible = v) + step;
 		this.addRenderableWidget(Button.builder(panelSideLabel(), b -> {

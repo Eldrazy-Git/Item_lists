@@ -81,6 +81,7 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 			testDumpCommand(context);
 			setUpActiveList(context);
 			testCounting(context);
+			testMenuVersusChest(context, world);
 			takeScreenshots(context, "");
 			switchLanguage(context, "fr_fr");
 			takeScreenshots(context, "_fr");
@@ -157,6 +158,61 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 		if (!saved) {
 			throw new AssertionError("La liste n'a pas ete sauvegardee sous elytreum_12_orbes.json");
 		}
+	}
+
+	/**
+	 * Un menu ouvert par le serveur (comme un menu Nexo / DeluxeMenus) n'est ni compte ni decouvert ;
+	 * un vrai coffre ouvert d'un clic droit l'est.
+	 */
+	private static void testMenuVersusChest(ClientGameTestContext context, TestSingleplayerContext world) {
+		context.runOnClient(mc -> ItemListsClient.getInstance().config().countOpenContainer = true);
+
+		// 1) Faux menu de plugin contenant une icone Nexo.
+		world.getServer().runOnServer(server -> {
+			var player = server.getPlayerList().getPlayers().get(0);
+			var container = new net.minecraft.world.SimpleContainer(27);
+			container.setItem(0, nexoStack("back_red", net.minecraft.world.item.Items.FEATHER));
+			player.openMenu(new net.minecraft.world.SimpleMenuProvider(
+					(id, inventory, p) -> net.minecraft.world.inventory.ChestMenu.threeRows(id, inventory, container),
+					net.minecraft.network.chat.Component.literal("Menu")));
+		});
+		context.waitTicks(10);
+		expect(context.computeOnClient(mc -> mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.ContainerScreen), true);
+		expect(context.computeOnClient(mc -> ItemListsClient.getInstance().customItems().isKnownOnCurrentServer("nexo:back_red")), false);
+		expect(context.computeOnClient(mc -> ItemListsClient.getInstance().tracker().count("nexo:back_red")), 0L);
+		world.getServer().runOnServer(server -> server.getPlayerList().getPlayers().get(0).closeContainer());
+		context.waitTicks(5);
+
+		// 2) Vrai coffre pose a cote du joueur, ouvert d'un clic droit.
+		net.minecraft.core.BlockPos pos = context.computeOnClient(mc -> mc.player.blockPosition().east(2));
+		world.getServer().runOnServer(server -> {
+			var level = server.overworld();
+			level.setBlock(pos, net.minecraft.world.level.block.Blocks.CHEST.defaultBlockState(), 3);
+			if (level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.ChestBlockEntity chest) {
+				chest.setItem(0, nexoStack("chest_gem", net.minecraft.world.item.Items.PAPER));
+			}
+		});
+		context.waitTicks(10);
+		context.runOnClient(mc -> mc.gameMode.useItemOn(mc.player, net.minecraft.world.InteractionHand.MAIN_HAND,
+				new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos), net.minecraft.core.Direction.UP, pos, false)));
+		context.waitTicks(10);
+		expect(context.computeOnClient(mc -> mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.ContainerScreen), true);
+		expect(context.computeOnClient(mc -> ItemListsClient.getInstance().customItems().isKnownOnCurrentServer("nexo:chest_gem")), true);
+		expect(context.computeOnClient(mc -> ItemListsClient.getInstance().tracker().count("nexo:chest_gem")), 1L);
+		context.setScreen(() -> null);
+		context.runOnClient(mc -> ItemListsClient.getInstance().config().countOpenContainer = false);
+		context.waitTicks(5);
+	}
+
+	/** Item Nexo cote serveur (equivalent de ce que Nexo envoie). */
+	private static ItemStack nexoStack(String id, net.minecraft.world.item.Item base) {
+		ItemStack stack = new ItemStack(base);
+		net.minecraft.nbt.CompoundTag values = new net.minecraft.nbt.CompoundTag();
+		values.putString("nexo:id", id);
+		net.minecraft.nbt.CompoundTag root = new net.minecraft.nbt.CompoundTag();
+		root.put("PublicBukkitValues", values);
+		stack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(root));
+		return stack;
 	}
 
 	private static void testCounting(ClientGameTestContext context) {

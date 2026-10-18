@@ -6,9 +6,8 @@ public class ModConfig {
 	public String activeListId;
 
 	/**
-	 * Compter aussi le contenu du conteneur actuellement ouvert (coffre, baril...).
-	 * Desactive par defaut : les menus de plugins (boutiques, catalogues) sont aussi des coffres
-	 * et leurs items seraient comptes comme possedes.
+	 * Compter aussi le contenu du conteneur actuellement ouvert, s'il s'agit d'un vrai stockage
+	 * (coffre, baril, shulker... ouvert par un clic sur le bloc). Les menus de plugins ne sont jamais comptes.
 	 */
 	public boolean countOpenContainer = false;
 
@@ -30,8 +29,14 @@ public class ModConfig {
 
 	public PanelSide sidePanelSide = PanelSide.AUTO;
 
-	/** Memoriser automatiquement les items custom vus sur les serveurs. */
+	/** Memoriser automatiquement les items custom vus sur les serveurs (inventaire et vrais coffres). */
 	public boolean discoverCustomItems = true;
+
+	/**
+	 * Memoriser aussi les items vus dans les menus de plugins (ex. /nexo inventory). Desactive par defaut :
+	 * ces menus affichent aussi des icones (Retour, Fermer, recompenses...) qui ne sont pas de vrais items.
+	 */
+	public boolean discoverInMenus = false;
 
 	public HudConfig hud = new HudConfig();
 

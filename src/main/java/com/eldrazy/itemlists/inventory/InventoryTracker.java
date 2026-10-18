@@ -64,6 +64,7 @@ public final class InventoryTracker {
 			lastFingerprint = Long.MIN_VALUE;
 			return;
 		}
+		ContainerOrigin.tick();
 		ModConfig config = ItemListsClient.getInstance().config();
 		AbstractContainerMenu menu = player.containerMenu;
 		long fingerprint = fingerprint(player, menu, config.countOpenContainer);
@@ -100,8 +101,13 @@ public final class InventoryTracker {
 
 	private void recount(LocalPlayer player, AbstractContainerMenu menu, ModConfig config) {
 		CustomItemCache cache = ItemListsClient.getInstance().customItems();
-		boolean discover = config.discoverCustomItems;
-		java.util.function.Consumer<McCountableItem> visitor = discover ? item -> discover(cache, item) : null;
+		boolean menuOpen = menu != player.inventoryMenu;
+		boolean realStorage = ContainerOrigin.isRealStorage(Minecraft.getInstance(), menu);
+		// Pendant un menu de plugin, le client "predit" les clics : une icone peut passer un instant dans
+		// l'inventaire ou sur le curseur. On ne decouvre donc rien tant qu'un tel menu est ouvert (sauf option).
+		boolean discover = config.discoverCustomItems && (!menuOpen || realStorage || config.discoverInMenus);
+		String origin = !menuOpen ? CustomItemCache.ORIGIN_INVENTORY : realStorage ? CustomItemCache.ORIGIN_STORAGE : CustomItemCache.ORIGIN_MENU;
+		java.util.function.Consumer<McCountableItem> visitor = discover ? item -> discover(cache, item, origin) : null;
 
 		List<McCountableItem> roots = new ArrayList<>();
 		Inventory inventory = player.getInventory();
@@ -117,7 +123,7 @@ public final class InventoryTracker {
 		}
 
 		List<McCountableItem> openContainer = new ArrayList<>();
-		if (menu != player.inventoryMenu) {
+		if (menuOpen) {
 			for (Slot slot : menu.slots) {
 				ItemStack stack = slot.getItem();
 				if (slot.container != inventory && !(slot.container instanceof ResultContainer) && !stack.isEmpty()) {
@@ -127,12 +133,13 @@ public final class InventoryTracker {
 		}
 
 		Map<String, Long> totals = RecursiveCounter.count(roots);
-		if (config.countOpenContainer) {
+		// Seul un vrai stockage (coffre, baril, shulker posee...) est compte : jamais un menu de boutique.
+		if (config.countOpenContainer && realStorage) {
 			for (McCountableItem item : openContainer) {
 				RecursiveCounter.add(totals, item, 1L, 0);
 			}
 		} else if (discover) {
-			// Pas de comptage, mais on visite quand meme pour decouvrir les items des menus de plugins.
+			// Pas de comptage, mais on visite quand meme le contenu pour la decouverte.
 			for (McCountableItem item : openContainer) {
 				RecursiveCounter.count(List.of(item));
 			}
@@ -141,7 +148,7 @@ public final class InventoryTracker {
 		revision++;
 	}
 
-	private static void discover(CustomItemCache cache, McCountableItem item) {
+	private static void discover(CustomItemCache cache, McCountableItem item, String origin) {
 		// Seuls les items de plugins d'items sont memorises d'office : les boutons de menus (rangs, categories...)
 		// n'ont qu'une identite faible et pollueraient le catalogue. Les autres sont memorises si on les ajoute soi-meme.
 		if (!item.identity().isPluginItem() || cache.isKnownOnCurrentServer(item.identity().id())) {
@@ -150,7 +157,7 @@ public final class InventoryTracker {
 		ItemStack stack = item.item() instanceof ItemStack s ? s
 				: item.item() instanceof ItemStackTemplate template ? template.create() : null;
 		if (stack != null) {
-			cache.record(stack, item.identity());
+			cache.record(stack, item.identity(), origin);
 		}
 	}
 }

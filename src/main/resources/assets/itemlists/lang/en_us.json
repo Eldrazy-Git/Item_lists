@@ -112,9 +112,11 @@
 
 	"gui.itemlists.settings.title": "Item Lists settings",
 	"gui.itemlists.settings.count_open_container": "Count the open container",
-	"gui.itemlists.settings.count_open_container.tooltip": "Also counts the contents of the open chest/barrel. Off by default: plugin menus (shops…) are chests too.",
+	"gui.itemlists.settings.count_open_container.tooltip": "Also counts the contents of the open chest, barrel or shulker. Plugin menus (shops…) are never counted.",
 	"gui.itemlists.settings.discover_custom_items": "Discover custom items",
-	"gui.itemlists.settings.discover_custom_items.tooltip": "Remembers Nexo/ItemsAdder/Oraxen items seen in game (inventory, chests, menus) for the catalog.",
+	"gui.itemlists.settings.discover_custom_items.tooltip": "Remembers Nexo / ItemsAdder / Oraxen / MythicMobs items seen in the inventory and real chests, for the catalog.",
+	"gui.itemlists.settings.discover_in_menus": "Also discover in menus",
+	"gui.itemlists.settings.discover_in_menus.tooltip": "Also remembers items shown in plugin menus (e.g. /nexo inventory). Beware: these menus also contain icons (Back, Close…).",
 	"gui.itemlists.settings.container_buttons": "Buttons in inventories",
 	"gui.itemlists.settings.container_buttons.tooltip": "Shows the \"Lists\" and \"Panel\" buttons above inventories and containers.",
 	"gui.itemlists.settings.hud_visible": "HUD visible",

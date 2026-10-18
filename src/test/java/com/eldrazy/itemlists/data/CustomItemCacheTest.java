@@ -1,6 +1,7 @@
 package com.eldrazy.itemlists.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
@@ -15,37 +16,56 @@ class CustomItemCacheTest {
 	@TempDir
 	Path dir;
 
-	@Test
-	void purgeKeepsPluginItemsAndItemsUsedInLists() throws Exception {
-		// Extrait reel d'un cache pollue : boutons de menus (rankup, categories) + vrais items.
-		String json = """
-				{ "version": 1, "servers": { "lacitadelle-mc.fr": {
-				  "nexo:etherium_shard":              { "source": "nexo",  "label": "Éclat d'Etherium" },
-				  "mythicmobs:elytreum_sword":        { "source": "autre", "label": "Épée en Elytreum" },
-				  "pack:ruby":                        { "source": "itemsadder", "label": "Rubis" },
-				  "citadellerankup:rang_badge_ok":    { "source": "autre", "label": "Niveau requis" },
-				  "minecraft:grass_block#survie":     { "source": "autre", "label": "Survie" },
-				  "minecraft:netherite_sword#10000":  { "source": "autre", "label": "Épée en Elytreum" },
-				  "minecraft:paper#ticket":           { "source": "autre", "label": "Ticket" }
-				} } }
-				""";
-		Path file = dir.resolve("custom_items_cache.json");
-		Files.writeString(file, json, StandardCharsets.UTF_8);
+	/** Cache reel pollue (version precedente, sans origine) + entrees recentes avec origine. */
+	private static final String CACHE = """
+			{ "version": 1, "servers": { "lacitadelle-mc.fr": {
+			  "nexo:etherium_shard":             { "source": "nexo",  "label": "Éclat d'Etherium" },
+			  "nexo:back_red":                   { "source": "nexo",  "label": "Retour" },
+			  "citadellerankup:rang_badge_ok":   { "source": "autre", "label": "Niveau requis" },
+			  "minecraft:grass_block#survie":    { "source": "autre", "label": "Survie" },
+			  "minecraft:paper#ticket":          { "source": "autre", "label": "Ticket" },
+			  "nexo:dark_shard":                 { "source": "nexo",  "label": "Éclat Sombre", "origin": "inventory" },
+			  "mythicmobs:elytreum_sword":       { "source": "autre", "label": "Épée en Elytreum", "origin": "storage" },
+			  "nexo:close_red":                  { "source": "nexo",  "label": "Fermer", "origin": "menu" },
+			  "menu:bouton":                     { "source": "autre", "label": "Bouton", "origin": "inventory" },
+			  "minecraft:paper#parchemin":       { "source": "autre", "label": "Parchemin", "origin": "manual" }
+			} } }
+			""";
 
+	private CustomItemCache load() throws Exception {
+		Path file = dir.resolve("custom_items_cache.json");
+		Files.writeString(file, CACHE, StandardCharsets.UTF_8);
 		CustomItemCache cache = new CustomItemCache(file);
 		cache.load();
-		assertEquals(7, cache.size());
+		assertEquals(10, cache.size());
+		return cache;
+	}
 
-		// "minecraft:paper#ticket" est utilise dans une liste : on le garde.
-		int removed = cache.purgeNonPluginItems(Set.of("minecraft:paper#ticket")::contains);
+	private String saved() throws Exception {
+		return Files.readString(dir.resolve("custom_items_cache.json"), StandardCharsets.UTF_8);
+	}
 
-		assertEquals(3, removed);
-		assertEquals(4, cache.size());
-		String saved = Files.readString(file, StandardCharsets.UTF_8);
-		assertTrue(saved.contains("nexo:etherium_shard"));
+	@Test
+	void purgeKeepsOnlyVerifiedPluginItemsManualAddsAndListItems() throws Exception {
+		CustomItemCache cache = load();
+		// "minecraft:paper#ticket" est utilise dans une liste : garde malgre son origine inconnue.
+		int removed = cache.purge(Set.of("minecraft:paper#ticket")::contains, false);
+
+		assertEquals(6, removed);
+		String saved = saved();
+		assertTrue(saved.contains("nexo:dark_shard"));
 		assertTrue(saved.contains("mythicmobs:elytreum_sword"));
-		assertTrue(saved.contains("pack:ruby"));
+		assertTrue(saved.contains("minecraft:paper#parchemin"));
 		assertTrue(saved.contains("minecraft:paper#ticket"));
-		assertTrue(!saved.contains("citadellerankup") && !saved.contains("#survie") && !saved.contains("#10000"));
+		for (String gone : new String[] {"nexo:etherium_shard", "nexo:back_red", "citadellerankup", "#survie", "nexo:close_red", "menu:bouton"}) {
+			assertFalse(saved.contains(gone), gone);
+		}
+	}
+
+	@Test
+	void menuItemsKeptWhenMenuDiscoveryIsEnabled() throws Exception {
+		CustomItemCache cache = load();
+		cache.purge(id -> false, true);
+		assertTrue(saved().contains("nexo:close_red"));
 	}
 }

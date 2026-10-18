@@ -53,7 +53,7 @@ Dans l'inventaire et **tous** les écrans de conteneur (coffres, shulkers, ender
 
 ### HUD (touche `H` pour afficher/masquer, `/itemlists hud` pour l'éditer)
 - Même style que *chunklimitcounter* : panneau sombre aux coins rabotés, palette vert / jaune / rouge (complet / partiel / manquant), barre de progression fine.
-- Comptage en temps réel (recalculé seulement quand l'inventaire change) : inventaire, item au curseur, contenu **récursif** des shulkers (`minecraft:container`) et bundles (`minecraft:bundle_contents`). Option : compter le conteneur ouvert (désactivée par défaut, car les menus de plugins sont aussi des coffres).
+- Comptage en temps réel (recalculé seulement quand l'inventaire change) : inventaire, item au curseur, contenu **récursif** des shulkers (`minecraft:container`) et bundles (`minecraft:bundle_contents`). Option : compter le coffre, baril ou shulker ouvert (les menus de plugins, eux, ne sont jamais comptés).
 - Éditeur : glisser-déposer n'importe où, ancrage automatique sur le point le plus proche (4 coins, 4 bords, centre), échelle, opacité du fond et du texte, nombre de lignes, mode compact, masquer les items complétés, barres on/off.
 - Le HUD se masque sous les menus (le panneau latéral prend le relais dans les inventaires).
 
@@ -89,7 +89,7 @@ Les items custom sont des items vanilla portant des data components. Des **extra
 
 - Le **comptage** compare ces identités : un rubis Nexo n'est pas compté comme du papier, et un diamant renommé à l'enclume reste un diamant.
 - Les blocs custom (note blocks, tripwire, champignons…) sont gérés via leur forme item.
-- Le client ne connaît pas le registre des plugins : chaque item custom vu (inventaire, coffres, menus de plugins comme `/nexo inventory`) est mémorisé, **par adresse de serveur**, dans `config/itemlists/custom_items_cache.json`, avec un exemplaire complet de l'item pour afficher son vrai modèle dans le catalogue et les listes.
+- Le client ne connaît pas le registre des plugins : chaque item de plugin d'items vu dans l'**inventaire** ou un **vrai coffre** est mémorisé, **par adresse de serveur**, dans `config/itemlists/custom_items_cache.json`, avec un exemplaire complet de l'item pour afficher son vrai modèle. Les **icônes des menus de plugins** (Retour, Fermer, récompenses…), même quand ce sont des items Nexo, sont ignorées. Option *Découvrir aussi dans les menus* pour `/nexo inventory`.
 
 > ⚠️ Les clés ci-dessus correspondent aux versions publiques des plugins. **Vérifiez-les sur vos vrais items** avec `/itemlists dump` (item en main) ou `/itemlists dump inventory` : la commande affiche l'identité reconnue, l'extracteur utilisé et écrit tous les composants dans `config/itemlists/dumps/`. Si un plugin range son id ailleurs, un nouvel extracteur s'ajoute en une ligne dans `IdentityRegistry`.
 

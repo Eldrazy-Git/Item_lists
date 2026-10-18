@@ -110,14 +110,24 @@ Dans les deux cas, un rapport complet (tous les composants, en SNBT indenté) es
 
 ### La découverte automatique (cache par serveur)
 
-Chaque fois qu'un item custom inconnu passe dans votre inventaire, dans un conteneur ouvert ou dans un **menu de plugin** (`/nexo inventory`, catalogues de boutique…), le mod le mémorise dans `config/itemlists/custom_items_cache.json` :
+Le mod mémorise automatiquement, dans `config/itemlists/custom_items_cache.json`, les items de **plugins d'items** (Nexo, Oraxen, ItemsAdder, MythicMobs, MMOItems) qui passent :
+- dans votre **inventaire** (y compris dans les shulkers et bundles qu'il contient) ;
+- dans un **vrai stockage** que vous ouvrez : coffre, baril, shulker posée, ender chest, minecart ou bateau à coffre, animal de bât.
+
+Il **ignore les menus des plugins**. Un serveur affiche souvent des items Nexo comme icônes de menu : « Retour », « Fermer », récompenses quotidiennes… Ce sont de vrais items Nexo, mais pas des items que les joueurs peuvent obtenir. Le client ne reçoit aucune information sur l'origine d'un menu. Le mod la déduit : un vrai stockage s'ouvre juste après un clic droit du joueur sur un bloc ou une entité qui en contient un, alors qu'un menu de plugin s'ouvre par une commande, un PNJ ou un item. Pendant qu'un menu de plugin est ouvert, rien n'est découvert, pas même dans l'inventaire, car le client affiche brièvement les icônes cliquées comme si elles y étaient.
+
+Les autres identités (clé Bukkit générique, replis par modèle, *custom model data* ou nom) attrapent surtout des boutons de menus : elles sont comptées, mais n'entrent dans le catalogue que si vous ajoutez l'item vous-même (touche `N`, catalogue).
+
+Pour les administrateurs qui veulent remplir le catalogue depuis `/nexo inventory`, l'option **Réglages → Découvrir aussi dans les menus** lève cette restriction.
+
+Exemple de cache :
 
 ```json
 {
   "version": 1,
   "servers": {
     "play.monserveur.fr": {
-      "nexo:ruby": { "source": "nexo", "label": "Rubis", "stack": { "id": "minecraft:paper", "components": { … } } }
+      "nexo:ruby": { "source": "nexo", "label": "Rubis", "origin": "inventory", "stack": { "id": "minecraft:paper", "components": { … } } }
     }
   }
 }
@@ -125,8 +135,9 @@ Chaque fois qu'un item custom inconnu passe dans votre inventaire, dans un conte
 
 - La clé est l'adresse du serveur (`singleplayer` en solo). Deux serveurs peuvent ainsi avoir un `nexo:ruby` différent.
 - Le **stack complet** est conservé, ce qui permet d'afficher le vrai modèle de l'item (via le pack de ressources du serveur) dans le catalogue, les listes et le HUD, même quand vous ne l'avez plus.
-- Pour faire le tour des items d'un serveur, il suffit en pratique d'ouvrir son catalogue en jeu (`/nexo inventory`, `/iazip`…).
-- Le cache se vide serveur par serveur depuis **Réglages → Oublier les items custom de ce serveur**.
+- `origin` indique où l'item a été vu : `inventory`, `storage` (vrai coffre), `menu` (seulement avec l'option ci-dessus) ou `manual` (ajouté par vous). Un item vu d'abord dans un menu puis obtenu pour de vrai passe à `inventory`.
+- Au démarrage, le cache est nettoyé : les entrées d'origine inconnue (versions précédentes), les items vus seulement dans des menus et les identités faibles sont retirés, **sauf** s'ils sont utilisés dans une liste ou ont été ajoutés à la main. Les vrais items reviennent dès qu'ils repassent dans l'inventaire.
+- Dans le catalogue, la touche `Suppr` sur un item custom survolé l'oublie. Le cache entier d'un serveur se vide depuis **Réglages → Oublier les items custom de ce serveur**.
 
 ---
 
@@ -137,7 +148,7 @@ Chaque fois qu'un item custom inconnu passe dans votre inventaire, dans un conte
 - les 41 slots de l'inventaire (sac, hotbar, armure, seconde main) ;
 - l'item tenu par le curseur pendant un déplacement (pour éviter les clignotements) ;
 - le contenu des **shulker boxes** (`minecraft:container`) et des **bundles** (`minecraft:bundle_contents`), de façon **récursive** : un bundle dans une shulker est compté, et inversement ;
-- en option, le conteneur actuellement ouvert.
+- en option, le conteneur actuellement ouvert, **s'il s'agit d'un vrai stockage** (voir §3).
 
 Le contenu d'un stack de *N* conteneurs identiques compte *N* fois. La profondeur est bornée à 8 niveaux pour se protéger d'items forgés à l'infini, et les totaux saturent au lieu de déborder.
 
@@ -145,9 +156,9 @@ Le contenu d'un stack de *N* conteneurs identiques compte *N* fois. La profondeu
 
 Deux stacks correspondent s'ils ont la **même identité extraite** (§3), pas seulement le même item de base. Un rubis Nexo n'est donc jamais compté comme du papier, et dix diamants ordinaires plus un diamant renommé font bien 11 diamants.
 
-### Pourquoi « compter le conteneur ouvert » est désactivé par défaut
+### Compter le conteneur ouvert
 
-Les menus des plugins (boutiques, catalogues, menus de craft custom) sont techniquement des coffres. Compter le conteneur ouvert ferait apparaître comme « possédés » les items exposés dans une boutique. L'option se trouve dans les **Réglages** pour ceux qui veulent compter leurs coffres de stockage.
+Les menus des plugins (boutiques, catalogues, menus de craft custom) sont techniquement des coffres. L'option **Réglages → Compter le conteneur ouvert** ne compte donc que les vrais stockages, ouverts d'un clic droit sur le bloc ou l'entité, jamais un menu de boutique.
 
 ---
 

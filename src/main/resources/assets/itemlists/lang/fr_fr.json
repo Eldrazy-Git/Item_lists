@@ -112,9 +112,11 @@
 
 	"gui.itemlists.settings.title": "Réglages d'Item Lists",
 	"gui.itemlists.settings.count_open_container": "Compter le conteneur ouvert",
-	"gui.itemlists.settings.count_open_container.tooltip": "Ajoute au comptage le contenu du coffre/baril ouvert. Désactivé par défaut : les menus de plugins (boutiques…) sont aussi des coffres.",
+	"gui.itemlists.settings.count_open_container.tooltip": "Ajoute au comptage le contenu du coffre, baril ou shulker ouvert. Les menus de plugins (boutiques…) ne sont jamais comptés.",
 	"gui.itemlists.settings.discover_custom_items": "Découvrir les items custom",
-	"gui.itemlists.settings.discover_custom_items.tooltip": "Mémorise les items Nexo/ItemsAdder/Oraxen vus en jeu (inventaire, coffres, menus) pour le catalogue.",
+	"gui.itemlists.settings.discover_custom_items.tooltip": "Mémorise les items Nexo / ItemsAdder / Oraxen / MythicMobs vus dans l'inventaire et les vrais coffres, pour le catalogue.",
+	"gui.itemlists.settings.discover_in_menus": "Découvrir aussi dans les menus",
+	"gui.itemlists.settings.discover_in_menus.tooltip": "Mémorise aussi les items affichés dans les menus de plugins (ex. /nexo inventory). Attention : ces menus contiennent aussi des icônes (Retour, Fermer…).",
 	"gui.itemlists.settings.container_buttons": "Boutons dans les inventaires",
 	"gui.itemlists.settings.container_buttons.tooltip": "Affiche les boutons « Listes » et « Panneau » au-dessus des inventaires et conteneurs.",
 	"gui.itemlists.settings.hud_visible": "HUD visible",

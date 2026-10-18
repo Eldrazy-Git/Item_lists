@@ -48,14 +48,17 @@ public final class CustomItemCache {
 		public final String id;
 		public final ItemSource source;
 		public String label;
+		/** Ou l'item a ete vu (ORIGIN_*), null pour les entrees des versions precedentes (non verifiees). */
+		public String origin;
 		final JsonElement stackJson;
 		private ItemStack decoded;
 		private boolean decodeFailed;
 
-		Entry(String id, ItemSource source, String label, JsonElement stackJson) {
+		Entry(String id, ItemSource source, String label, String origin, JsonElement stackJson) {
 			this.id = id;
 			this.source = source;
 			this.label = label;
+			this.origin = origin;
 			this.stackJson = stackJson;
 		}
 
@@ -155,7 +158,32 @@ public final class CustomItemCache {
 	}
 
 	/** Memorise un item custom vu en jeu. Ne fait rien pour les items vanilla ou deja connus. */
+	/** Origines possibles d'une decouverte, de la plus fiable a la moins fiable. */
+	public static final String ORIGIN_MANUAL = "manual";
+	public static final String ORIGIN_INVENTORY = "inventory";
+	public static final String ORIGIN_STORAGE = "storage";
+	public static final String ORIGIN_MENU = "menu";
+
+	/** Ajout volontaire du joueur (touche d'ajout, catalogue...) : toujours conserve. */
 	public void record(ItemStack stack, ItemIdentity identity) {
+		record(stack, identity, ORIGIN_MANUAL);
+	}
+
+	private static int reliability(String origin) {
+		if (origin == null) {
+			return 0;
+		}
+		return switch (origin) {
+			case ORIGIN_MANUAL -> 4;
+			case ORIGIN_INVENTORY -> 3;
+			case ORIGIN_STORAGE -> 2;
+			case ORIGIN_MENU -> 1;
+			default -> 0;
+		};
+	}
+
+	/** Memorise un item custom vu en jeu, avec son origine. Ne fait rien pour les items vanilla. */
+	public void record(ItemStack stack, ItemIdentity identity, String origin) {
 		if (!identity.isCustom() || stack.isEmpty()) {
 			return;
 		}
@@ -168,7 +196,12 @@ public final class CustomItemCache {
 		String label = stack.getHoverName().getString();
 		Entry existing = items.get(identity.id());
 		if (existing != null) {
-			if (!existing.label.equals(label) && !label.isBlank()) {
+			// Un item d'abord vu dans un menu puis obtenu pour de vrai devient fiable.
+			if (reliability(origin) > reliability(existing.origin)) {
+				existing.origin = origin;
+				markDirty();
+			}
+			if (!existing.label.equals(label) && !label.isBlank() && !ORIGIN_MENU.equals(origin)) {
 				existing.label = label;
 				markDirty();
 			}
@@ -179,7 +212,7 @@ public final class CustomItemCache {
 		}
 		DynamicOps<JsonElement> ops = registries.createSerializationContext(JsonOps.INSTANCE);
 		JsonElement json = ItemStack.CODEC.encodeStart(ops, stack.copyWithCount(1)).result().orElse(null);
-		Entry entry = new Entry(identity.id(), identity.source(), label, json);
+		Entry entry = new Entry(identity.id(), identity.source(), label, origin, json);
 		entry.decoded = stack.copyWithCount(1);
 		items.put(identity.id(), entry);
 		markDirty();
@@ -197,18 +230,29 @@ public final class CustomItemCache {
 	}
 
 	/**
-	 * Retire, sur tous les serveurs, les items qui ne viennent pas d'un plugin d'items (boutons de menus,
-	 * replis custom model data / nom...), sauf ceux que {@code keep} demande de garder (utilises dans une liste).
+	 * Nettoyage du cache (au demarrage) : retire, sur tous les serveurs, les entrees peu fiables,
+	 * sauf celles que {@code keep} demande de garder (utilisees dans une liste) :
+	 * <ul>
+	 *   <li>entrees des versions precedentes, d'origine inconnue (elles reviennent des que l'item est revu) ;</li>
+	 *   <li>items vus seulement dans un menu de plugin, si {@code keepMenuItems} est faux ;</li>
+	 *   <li>items qui ne viennent pas d'un plugin d'items (boutons de menus, replis), sauf ajout manuel.</li>
+	 * </ul>
 	 *
 	 * @return nombre d'entrees retirees
 	 */
-	public int purgeNonPluginItems(java.util.function.Predicate<String> keep) {
+	public int purge(java.util.function.Predicate<String> keep, boolean keepMenuItems) {
 		int removed = 0;
 		for (Map<String, Entry> items : servers.values()) {
 			var iterator = items.values().iterator();
 			while (iterator.hasNext()) {
 				Entry entry = iterator.next();
-				if (!ItemIdentity.isPluginItemId(entry.id, entry.source) && !keep.test(entry.id)) {
+				if (keep.test(entry.id) || ORIGIN_MANUAL.equals(entry.origin)) {
+					continue;
+				}
+				boolean unverified = entry.origin == null;
+				boolean menuOnly = ORIGIN_MENU.equals(entry.origin) && !keepMenuItems;
+				boolean notPluginItem = !ItemIdentity.isPluginItemId(entry.id, entry.source);
+				if (unverified || menuOnly || notPluginItem) {
 					iterator.remove();
 					removed++;
 				}
@@ -258,7 +302,8 @@ public final class CustomItemCache {
 						JsonObject o = item.getValue().getAsJsonObject();
 						ItemSource source = ItemSource.fromCsv(o.has("source") ? o.get("source").getAsString() : null);
 						String label = o.has("label") ? o.get("label").getAsString() : item.getKey();
-						items.put(item.getKey(), new Entry(item.getKey(), source == null ? ItemSource.OTHER : source, label, o.get("stack")));
+						String origin = o.has("origin") ? o.get("origin").getAsString() : null;
+						items.put(item.getKey(), new Entry(item.getKey(), source == null ? ItemSource.OTHER : source, label, origin, o.get("stack")));
 					} catch (RuntimeException e) {
 						// Entree corrompue : ignoree, les autres sont conservees.
 					}
@@ -296,6 +341,9 @@ public final class CustomItemCache {
 				JsonObject o = new JsonObject();
 				o.addProperty("source", entry.source.csvName());
 				o.addProperty("label", entry.label);
+				if (entry.origin != null) {
+					o.addProperty("origin", entry.origin);
+				}
 				if (entry.stackJson != null) {
 					o.add("stack", entry.stackJson);
 				}

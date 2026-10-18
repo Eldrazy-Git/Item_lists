@@ -23,6 +23,7 @@ import com.eldrazy.itemlists.config.ModPaths;
 import com.eldrazy.itemlists.data.CustomItemCache;
 import com.eldrazy.itemlists.data.ItemList;
 import com.eldrazy.itemlists.data.ListManager;
+import com.eldrazy.itemlists.inventory.ContainerOrigin;
 import com.eldrazy.itemlists.inventory.InventoryTracker;
 
 /** Point d'entree client du mod Item Lists : charge la config et les listes, branche les evenements. */
@@ -53,11 +54,12 @@ public class ItemListsClient implements ClientModInitializer {
 		syncActiveToConfig();
 		customItems = new CustomItemCache(ModPaths.CUSTOM_ITEMS_CACHE);
 		customItems.load();
-		// Nettoyage des boutons de menus memorises par les versions precedentes (garde ce qui est dans une liste).
-		int purged = customItems.purgeNonPluginItems(lists::usesItem);
+		// Nettoyage des icones de menus et des entrees non verifiees (garde ce qui est dans une liste).
+		int purged = customItems.purge(lists::usesItem, config.discoverInMenus);
 		if (purged > 0) {
-			LOGGER.info("{} item(s) de menus retires du cache des items custom.", purged);
+			LOGGER.info("{} entree(s) peu fiable(s) retiree(s) du cache des items custom.", purged);
 		}
+		ContainerOrigin.register();
 
 		ItemListsCommand.register();
 		ModKeyBindings.register();
