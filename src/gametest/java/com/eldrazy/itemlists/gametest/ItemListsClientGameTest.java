@@ -68,6 +68,7 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 			takeScreenshots(context, "");
 			switchLanguage(context, "fr_fr");
 			takeScreenshots(context, "_fr");
+			showcase(context, world);
 			switchLanguage(context, "en_us");
 		}
 	}
@@ -150,6 +151,78 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 		expect(rubies, 9L);
 		boolean cached = context.computeOnClient(mc -> ItemListsClient.getInstance().customItems().isKnownOnCurrentServer("citadelle:etherium_shard"));
 		expect(cached, true);
+	}
+
+	/**
+	 * Captures "vitrine" pour le README : uniquement des items vanilla, cache des items custom vide,
+	 * fenetre 1280x720, interface en francais. Fichiers showcase_*.png.
+	 */
+	private static void showcase(ClientGameTestContext context, TestSingleplayerContext world) {
+		world.getServer().runCommand("clear ItemListsDev");
+		give(world, "iron_ingot", 64 * 9);
+		give(world, "gunpowder", 64 * 3);
+		give(world, "obsidian", 64 * 2);
+		give(world, "amethyst_shard", 40);
+		give(world, "netherite_ingot", 4);
+		give(world, "diamond", 64);
+		give(world, "golden_apple", 12);
+		give(world, "shulker_box[container=[{slot:0,item:{id:\"diamond\",count:64}},{slot:1,item:{id:\"iron_ingot\",count:64}},"
+				+ "{slot:2,item:{id:\"bundle\",count:1,components:{\"minecraft:bundle_contents\":[{id:\"echo_shard\",count:8}]}}}]]", 1);
+		context.runOnClient(mc -> {
+			ItemListsClient client = ItemListsClient.getInstance();
+			client.customItems().clearCurrentServer();
+			client.config().discoverCustomItems = false;
+			ListManager lists = client.lists();
+			for (ItemList old : lists.all()) {
+				lists.delete(old);
+			}
+			ItemList list = lists.create("Balise et défenses");
+			list.entries().add(new ListEntry("minecraft:iron_ingot", "Lingot de fer", 1024));
+			list.entries().add(new ListEntry("minecraft:diamond", "Diamant", 120));
+			list.entries().add(new ListEntry("minecraft:obsidian", "Obsidienne", 128));
+			list.entries().add(new ListEntry("minecraft:gunpowder", "Poudre à canon", 192));
+			list.entries().add(new ListEntry("minecraft:netherite_ingot", "Lingot de netherite", 9));
+			list.entries().add(new ListEntry("minecraft:echo_shard", "Éclat d'écho", 32));
+			list.entries().add(new ListEntry("minecraft:end_crystal", "Cristal de l'End", 4));
+			list.entries().add(new ListEntry("minecraft:golden_apple", "Pomme dorée", 12));
+			lists.markDirty(list);
+			client.setActiveList(list);
+			lists.create("Ferme à fer");
+			lists.create("Portail de l'End");
+			lists.saveAll();
+		});
+		context.getInput().resizeWindow(1280, 720);
+		context.waitTicks(40);
+		context.runOnClient(mc -> {
+			mc.gui.toastManager().clear();
+			mc.gui.hud.getChat().clearMessages(false);
+		});
+		context.waitTicks(5);
+		context.takeScreenshot("showcase_hud");
+
+		context.setScreen(() -> new InventoryScreen(context.computeOnClient(mc -> mc.player)));
+		context.runOnClient(mc -> ItemListsClient.getInstance().config().sidePanelVisible = true);
+		context.waitTicks(5);
+		context.takeScreenshot("showcase_inventory_side_panel");
+		context.runOnClient(mc -> ItemListsClient.getInstance().config().sidePanelVisible = false);
+
+		context.setScreen(() -> new ListsScreen(null));
+		context.waitTicks(5);
+		context.takeScreenshot("showcase_lists_screen");
+		context.setScreen(() -> new CatalogScreen(null, ItemListsClient.getInstance().lists().active()));
+		context.waitTicks(5);
+		context.takeScreenshot("showcase_catalog");
+		context.setScreen(() -> new HudEditScreen(null));
+		context.waitTicks(5);
+		context.takeScreenshot("showcase_hud_editor");
+		context.setScreen(() -> new ImportScreen(null));
+		context.waitTicks(5);
+		context.takeScreenshot("showcase_import");
+		context.setScreen(() -> new SettingsScreen(null));
+		context.waitTicks(5);
+		context.takeScreenshot("showcase_settings");
+		context.setScreen(() -> null);
+		context.runOnClient(mc -> ItemListsClient.getInstance().config().discoverCustomItems = true);
 	}
 
 	private static void switchLanguage(ClientGameTestContext context, String code) {

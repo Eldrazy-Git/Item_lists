@@ -21,7 +21,7 @@ Mod **Fabric 26.2**, **100 % client**, pour créer et suivre des listes d'items 
 - Créer, renommer, dupliquer, supprimer des listes ; une **liste active** suivie par le HUD et le panneau latéral.
 - Chaque entrée : identifiant d'item (vanilla ou custom), libellé, quantité cible.
 - Sauvegarde automatique dans `config/itemlists/lists/<id>.json` (une liste = un fichier).
-- L'`id` d'une liste suit son nom : ASCII minuscule, chiffres et `_`, sans accents ni caractères spéciaux (`Élytreum - 12 orbes` → `elytreum_12_orbes`), suffixe `_2`, `_3`… en cas de doublon. Renommer la liste renomme le fichier.
+- L'`id` d'une liste suit son nom : ASCII minuscule, chiffres et `_`, sans accents ni caractères spéciaux (`Balise et défenses` → `balise_et_defenses`), suffixe `_2`, `_3`… en cas de doublon. Renommer la liste renomme le fichier.
 
 ### Menu des listes (touche `Y`, ou `/itemlists open`)
 - Listes à gauche (double-clic = activer), contenu à droite : icône, nom, possédé / cible coloré, barre de progression.
@@ -29,21 +29,29 @@ Mod **Fabric 26.2**, **100 % client**, pour créer et suivre des listes d'items 
 - Recherche (nom, id, `@namespace`), tri (ordre, nom, progression, manquants, quantité).
 - Import / export JSON et CSV, réglages.
 
+![Menu des listes](docs/images/menu-listes.png)
+
 ### Catalogue (« Ajouter… »)
 - Tous les items vanilla + les **items custom découverts** sur le serveur courant.
 - Recherche `nom`, `id` ou `@nexo`, filtres par source (vanilla, custom, Nexo, ItemsAdder, Oraxen, autre) et par onglet créatif.
 - Clic : +1 pile · Maj+clic : +1 · clic droit : retirer.
+
+![Catalogue](docs/images/catalogue.png)
 
 ### Inventaires et conteneurs
 Dans l'inventaire et **tous** les écrans de conteneur (coffres, shulkers, ender chest, barils, menus de plugins…) :
 - bouton **livre** : menu des listes ; bouton **longue-vue** : panneau latéral de la liste active ;
 - touche `U` sur un item survolé (inventaire, REI, JEI) : ajout à la liste active. En jeu sans menu, `U` ajoute l'item tenu en main.
 
+![Boutons et panneau latéral dans l'inventaire](docs/images/panneau-lateral.png)
+
 ### HUD (touche `H` pour afficher/masquer, `/itemlists hud` pour l'éditer)
 - Même style que *chunklimitcounter* : panneau sombre aux coins rabotés, palette vert / jaune / rouge (complet / partiel / manquant), barre de progression fine.
 - Comptage en temps réel (recalculé seulement quand l'inventaire change) : inventaire, item au curseur, contenu **récursif** des shulkers (`minecraft:container`) et bundles (`minecraft:bundle_contents`). Option : compter le conteneur ouvert (désactivée par défaut, car les menus de plugins sont aussi des coffres).
 - Éditeur : glisser-déposer n'importe où, ancrage automatique sur le point le plus proche (4 coins, 4 bords, centre), échelle, opacité du fond et du texte, nombre de lignes, mode compact, masquer les items complétés, barres on/off.
 - Le HUD se masque sous les menus (le panneau latéral prend le relais dans les inventaires).
+
+![Éditeur du HUD](docs/images/editeur-hud.png)
 
 ### Touches (Options › Commandes › Item Lists)
 | Action | Défaut |
@@ -84,18 +92,23 @@ Les items custom sont des items vanilla portant des data components. Des **extra
 ### JSON (export, import et fichiers de `config/itemlists/lists/`)
 ```json
 {
-  "id": "elytreum_12_orbes",
-  "label": "Elytreum - 12 orbes",
+  "id": "balise_et_defenses",
+  "label": "Balise et défenses",
   "entries": [
     {
       "item": "minecraft:iron_ingot",
       "label": "Lingot de fer",
-      "target": 3072
+      "target": 1024
+    },
+    {
+      "item": "minecraft:diamond",
+      "label": "Diamant",
+      "target": 120
     },
     {
       "item": "minecraft:echo_shard",
       "label": "Éclat d'écho",
-      "target": 10
+      "target": 32
     }
   ]
 }
@@ -106,11 +119,12 @@ Les items custom sont des items vanilla portant des data components. Des **extra
 ### CSV (pour Excel FR)
 ```
 id;nom;quantite_cible;source
-minecraft:iron_ingot;Lingot de fer;3072;vanilla
-citadelle:etherium_shard;Éclat d’Etherium;960;itemsadder
+minecraft:iron_ingot;Lingot de fer;1024;vanilla
+minecraft:diamond;Diamant;120;vanilla
+minecraft:echo_shard;Éclat d'écho;32;vanilla
 ```
 - Export : séparateur `;`, UTF-8 **avec BOM**, fins de ligne CRLF, champs entre guillemets si nécessaire, protection contre l'injection de formules (`=…` → `'=…`).
-- `source` : `vanilla`, `nexo`, `itemsadder`, `oraxen` ou `autre`.
+- `source` : `vanilla`, `nexo`, `itemsadder`, `oraxen` ou `autre`. Pour un item custom, la colonne `id` contient l'identifiant du plugin (ex. `nexo:<id>`, voir [Items custom](#items-custom-nexo-itemsadder-oraxen)).
 - Import : séparateur `;`, `,` ou tabulation détecté automatiquement, en-tête facultatif (colonnes reconnues dans n'importe quel ordre : `id`/`item`, `nom`/`name`/`label`, `quantite_cible`/`quantite`/`target`), UTF-8 ou Windows-1252 (CSV enregistré par Excel), nombres du type `3 072`. Le nom de la liste est le nom du fichier.
 
 ### Import / export en jeu

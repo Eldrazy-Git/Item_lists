@@ -24,7 +24,7 @@ Sommaire :
 
 ## 1. Vue d'ensemble
 
-Item Lists est un mod **uniquement client** pour Fabric 26.2. Il permet de préparer des listes d'items à réunir (« 3 072 lingots de fer, 960 éclats d'Etherium… ») et d'afficher en permanence ce qu'il vous manque.
+Item Lists est un mod **uniquement client** pour Fabric 26.2. Il permet de préparer des listes d'items à réunir (« 1 024 lingots de fer, 120 diamants, 32 éclats d'écho… ») et d'afficher en permanence ce qu'il vous manque.
 
 Comme le mod est uniquement côté client :
 - le serveur n'a besoin de rien. Le mod fonctionne sur n'importe quel serveur, y compris ceux qui utilisent Nexo, ItemsAdder ou Oraxen ;
@@ -157,10 +157,10 @@ Chaque liste est un fichier `config/itemlists/lists/<id>.json`, au format exact 
 
 ```json
 {
-  "id": "elytreum_12_orbes",
-  "label": "Elytreum - 12 orbes",
+  "id": "balise_et_defenses",
+  "label": "Balise et défenses",
   "entries": [
-    { "item": "minecraft:iron_ingot", "label": "Lingot de fer", "target": 3072 }
+    { "item": "minecraft:iron_ingot", "label": "Lingot de fer", "target": 1024 }
   ]
 }
 ```
