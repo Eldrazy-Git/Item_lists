@@ -95,7 +95,7 @@ Chaque stack passe par une chaîne d'**extracteurs** ([`IdentityRegistry`](../sr
 
 Quelques règles :
 - Les plugins Bukkit rangent leurs données persistantes sous `PublicBukkitValues` depuis 1.20.5, d'où les extracteurs 1, 2 et 6.
-- **Variantes vanilla** : comme dans l'index du catalogue La Citadelle, une potion, une flèche à effet ou un livre enchanté est identifié avec son composant, au format de la syntaxe des composants de Minecraft : `minecraft:splash_potion[minecraft:strong_healing]`, `minecraft:enchanted_book[minecraft:mending=1,minecraft:unbreaking=3]` (plusieurs enchantements triés et séparés par des virgules). Une potion de soin et une potion de poison sont donc comptées séparément, et le catalogue propose chaque variante.
+- **Variantes vanilla** : une potion, une flèche à effet ou un livre enchanté est identifié avec son composant, au format de la syntaxe des composants de Minecraft : `minecraft:splash_potion[minecraft:strong_healing]`, `minecraft:enchanted_book[minecraft:mending=1,minecraft:unbreaking=3]` (plusieurs enchantements triés et séparés par des virgules). Une potion de soin et une potion de poison sont donc comptées séparément, et le catalogue propose chaque variante.
 - Les extracteurs 8 à 10 sont des **replis** pour les plugins inconnus. Ils produisent des identités « synthétiques » (avec `#`) qui restent stables tant que le serveur ne change pas ses items.
 - Un modèle vanilla réutilisé (un papier affiché comme un diamant) donne `minecraft:paper#diamond`. Sinon il serait confondu avec un vrai diamant.
 - Un objet **renommé à l'enclume** reste vanilla. Minecraft affiche ces noms en italique, alors que les plugins forcent presque toujours `italic: false`, et c'est ce qui permet de les distinguer.

@@ -5,7 +5,7 @@ Toutes les évolutions notables d'Item Lists sont listées ici.
 ## [Non publié]
 
 ### Ajouté
-- **Potions, flèches à effet et livres enchantés distingués par leurs composants**, au même format que l'index du catalogue La Citadelle :
+- **Potions, flèches à effet et livres enchantés distingués par leurs composants**, au format de la syntaxe des composants de Minecraft (celle de `/give`) :
   - potions, potions jetables / persistantes et flèches à effet : `minecraft:potion[minecraft:fire_resistance]`, `minecraft:tipped_arrow[minecraft:long_swiftness]` (composant `potion_contents`) ;
   - livres enchantés : `minecraft:enchanted_book[minecraft:sharpness=5]`, plusieurs enchantements triés et séparés par des virgules (composant `stored_enchantments`).
   
