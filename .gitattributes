@@ -1,0 +1,6 @@
+# Fins de ligne LF partout (les fichiers de reference des tests sont compares octet pour octet,
+# et gradlew doit rester executable sous Linux / macOS).
+* text=auto eol=lf
+*.bat text eol=crlf
+*.png binary
+*.jar binary

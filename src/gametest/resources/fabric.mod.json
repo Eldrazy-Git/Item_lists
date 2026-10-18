@@ -1,0 +1,15 @@
+{
+	"schemaVersion": 1,
+	"id": "itemlists-gametest",
+	"version": "1.0.0",
+	"name": "Item Lists - tests en jeu",
+	"environment": "client",
+	"entrypoints": {
+		"fabric-client-gametest": [
+			"com.eldrazy.itemlists.gametest.ItemListsClientGameTest"
+		]
+	},
+	"depends": {
+		"itemlists": "*"
+	}
+}

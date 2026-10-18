@@ -1,0 +1,9 @@
+classTweaker	v1	official
+
+# Position / taille de la GUI et slot survole : necessaires pour placer les boutons et le panneau lateral
+# dans tous les ecrans de conteneur, et pour la touche "ajouter l'item survole".
+accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen leftPos I
+accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen topPos I
+accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen imageWidth I
+accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen imageHeight I
+accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen hoveredSlot Lnet/minecraft/world/inventory/Slot;

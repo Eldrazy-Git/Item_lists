@@ -1,0 +1,36 @@
+{
+	"schemaVersion": 1,
+	"id": "itemlists",
+	"version": "${version}",
+	"name": "Item Lists",
+	"description": "Creez et suivez des listes d'items (vanilla, Nexo, ItemsAdder, Oraxen) avec un HUD, un catalogue et l'import/export JSON/CSV.",
+	"authors": [
+		"Eldrazy"
+	],
+	"contact": {},
+	"license": "MIT",
+	"icon": "assets/itemlists/icon.png",
+	"environment": "client",
+	"accessWidener": "itemlists.classtweaker",
+	"entrypoints": {
+		"client": [
+			"com.eldrazy.itemlists.ItemListsClient"
+		],
+		"rei_client": [
+			"com.eldrazy.itemlists.compat.rei.ItemListsReiPlugin"
+		],
+		"jei_mod_plugin": [
+			"com.eldrazy.itemlists.compat.jei.ItemListsJeiPlugin"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"roughlyenoughitems": "*",
+		"jei": "*"
+	}
+}

@@ -1,0 +1,71 @@
+{
+  "id": "elytreum_12_orbe_s",
+  "label": 'Elytreum - 12 orbes',
+  "entries": [
+    {
+      "item": "minecraft:iron_ingot",
+      "label": "Lingot de fer",
+      "target": 3072
+    },
+    {
+      "item": "minecraft:gunpowder",
+      "label": "Poudre à canon",
+      "target": 3072
+    },
+    {
+      "item": "minecraft:obsidian",
+      "label": "Obsidienne",
+      "target": 3072
+    },
+    {
+      "item": "minecraft:amethyst_block",
+      "label": "Bloc d'améthyste",
+      "target": 6144
+    },
+    {
+      "item": "minecraft:amethyst_shard",
+      "label": "Éclat d'améthyste",
+      "target": 1536
+    },
+    {
+      "item": "minecraft:echo_shard",
+      "label": "Éclat d'écho",
+      "target": 72
+    },
+    {
+      "item": "minecraft:gilded_blackstone",
+      "label": "Roche noire dorée",
+      "target": 36
+    },
+    {
+      "item": "minecraft:netherite_ingot",
+      "label": "Lingot de netherite",
+      "target": 72
+    },
+    {
+      "item": "minecraft:end_crystal",
+      "label": "Cristal de l'End",
+      "target": 36
+    },
+    {
+      "item": "minecraft:raw_gold_block",
+      "label": "Bloc d'or brut",
+      "target": 72
+    },
+    {
+      "item": "minecraft:heart_of_the_sea",
+      "label": "Coeur de la mer",
+      "target": 36
+    },
+    {
+      "item": "citadelle:etherium_shard",
+      "label": "Éclat d’Etherium",
+      "target": 960
+    },
+    {
+      "item": "minecraft:diamond",
+      "label": "Diamant",
+      "target": 120
+    }
+  ]
+}
