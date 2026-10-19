@@ -2,7 +2,7 @@
 
 Toutes les évolutions notables d'Item Lists sont listées ici.
 
-## [Non publié]
+## [1.2.0] - 2026-10-19
 
 ### Ajouté
 - **Préfixe du serveur pour les items Nexo, Oraxen, MythicMobs et MMOItems** (activé par défaut) : dans les listes et les exports, ces items sont écrits avec le préfixe du serveur (`la_citadelle:elytreum_sword`) au lieu de celui du plugin (`mythicmobs:elytreum_sword`). Les namespaces réels (ItemsAdder, `minecraft:`) ne changent pas.
@@ -100,6 +100,7 @@ Première version publique.
 - REI ne permet pas de faire glisser les items de sa liste principale. Utilisez la touche `N`, ou passez par les favoris REI.
 - Les clés utilisées pour Nexo, Oraxen et ItemsAdder correspondent aux versions publiques de ces plugins. Vérifiez-les sur votre serveur avec `/itemlists dump`.
 
+[1.2.0]: https://github.com/Eldrazy-Git/Item_lists/releases/tag/v1.2.0
 [1.1.0]: https://github.com/Eldrazy-Git/Item_lists/releases/tag/v1.1.0
 [1.0.1]: https://github.com/Eldrazy-Git/Item_lists/releases/tag/v1.0.1
 [1.0.0]: https://github.com/Eldrazy-Git/Item_lists/releases/tag/v1.0.0
