@@ -61,7 +61,7 @@ Le cycle général :
 
 | Menu des listes | Catalogue |
 |---|---|
-| ![Menu des listes](images/menu-listes-v4.png) | ![Catalogue](images/catalogue-v4.png) |
+| ![Menu des listes](images/menu-listes-v5.png) | ![Catalogue](images/catalogue-v4.png) |
 
 | HUD | Panneau latéral dans l'inventaire |
 |---|---|
@@ -100,6 +100,16 @@ Quelques règles :
 - Un modèle vanilla réutilisé (un papier affiché comme un diamant) donne `minecraft:paper#diamond`. Sinon il serait confondu avec un vrai diamant.
 - Un objet **renommé à l'enclume** reste vanilla. Minecraft affiche ces noms en italique, alors que les plugins forcent presque toujours `italic: false`, et c'est ce qui permet de les distinguer.
 - Un extracteur qui plante est ignoré et ne casse jamais le comptage.
+
+### Préfixe du serveur
+
+Nexo, Oraxen, MythicMobs et MMOItems n'ont pas de namespace : les préfixes `nexo:`, `oraxen:`, `mythicmobs:` et `mmoitems:` sont ajoutés par le mod. L'option **Ids : serveur** (activée par défaut, interrupteur dans le menu des listes) les remplace, **dans les listes**, par le préfixe du serveur : `la_citadelle:elytreum_sword` au lieu de `mythicmobs:elytreum_sword`.
+
+- **Préfixe** : dérivé du nom du serveur dans la liste des serveurs (« La Citadelle » → `la_citadelle` ; adresse en secours ; `solo` en solo), modifiable par serveur avec le bouton **Préfixe : …** (enregistré dans `config.json`, `serverPrefixes`).
+- **Ce qui change** : seulement l'écriture dans les listes, donc dans les exports. Les vrais namespaces (ItemsAdder, `minecraft:`, autres plugins) ne sont jamais modifiés.
+- **En interne**, le mod garde l'id du plugin, non ambigu. Le comptage range chaque quantité sous les deux formes : une liste en `nexo:ruby` ou en `la_citadelle:ruby` compte les mêmes items. L'icône et la source d'un id `la_citadelle:ruby` sont retrouvées grâce aux items déjà vus sur le serveur.
+- **Interrupteur** : il convertit toutes les listes. Vers le préfixe du serveur, c'est immédiat. Vers les préfixes des plugins, le mod doit savoir de quel plugin vient `la_citadelle:ruby` : il le retrouve parmi les items vus sur le serveur ; un item jamais vu reste tel quel (le message l'indique). Si deux plugins ont un item du même nom, c'est le premier trouvé qui l'emporte.
+- **Changer le préfixe** : les listes en mode « serveur » sont réécrites avec le nouveau préfixe.
 
 ### Vérifier sur un vrai serveur : `/itemlists dump`
 
@@ -344,6 +354,7 @@ client/
   ItemDisplay                id → stack affichable (cache, repli « papier + nom »)
   EntryRows                  lignes filtrées/triées avec quantités (menu + panneau)
   ListActions                ajout/retrait d'items (catalogue, touche N, REI/JEI)
+  ServerPrefix, IdConversion préfixe du serveur et conversion des listes (ids serveur / plugins)
   CatalogData                contenu du catalogue (registre, onglets créatifs, livres à tous les niveaux, items custom)
   FileDialogs                sélecteur de fichier natif
   ModKeyBindings             touches
@@ -403,6 +414,7 @@ Prérequis : **Java 25** (Loom 1.18 l'exige pour lancer Gradle).
 - Comptage récursif shulker ⇄ bundle, conteneurs empilés, profondeur bornée, saturation.
 - Lecteurs `custom_data` de Nexo, Oraxen, ItemsAdder, MythicMobs (ancien et nouveau format), MMOItems et Bukkit générique.
 - Format des variantes vanilla (`minecraft:potion[…]`, `minecraft:enchanted_book[…=…,…]`).
+- Préfixe du serveur : remplacement limité aux préfixes ajoutés par le mod, nettoyage des noms de serveurs.
 - Nettoyage du cache des items custom selon leur origine (extrait d'un cache réel pollué par des menus).
 
 ### Tests en jeu (`src/gametest`, API client gametest de Fabric)
@@ -414,6 +426,7 @@ Le test crée un monde, donne de **faux items de plugins** (composants posés pa
 - la découverte des items custom : un bouton de menu n'est pas mémorisé, une icône Nexo dans un **faux menu ouvert par le serveur** n'est ni comptée ni mémorisée, un item dans un **vrai coffre** ouvert d'un clic droit l'est ;
 - les potions, flèches et livres enchantés : comptés séparément, icône reconstruite depuis l'id, tous les niveaux de livres dans le catalogue ;
 - le panneau de l'inventaire : position « dessous », saisie d'une quantité au clavier, molette ;
+- le préfixe du serveur : id écrit `solo:ruby`, comptage sous les deux formes, pas de doublon, conversion dans les deux sens, préfixe personnalisé ;
 - avec `-Pviewer=rei` ou `-Pviewer=jei` : la touche `N` sur un item de leur liste.
 
 Il capture enfin chaque écran **en anglais puis en français**, dans `build/run/clientGameTest/screenshots/`. Les fichiers `showcase_*.png` (1920×1045, interface à l'échelle 3) sont ceux de ce document.

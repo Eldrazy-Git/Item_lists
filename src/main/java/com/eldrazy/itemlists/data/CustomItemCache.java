@@ -145,6 +145,39 @@ public final class CustomItemCache {
 		return null;
 	}
 
+	/**
+	 * Item Nexo / Oraxen / MythicMobs / MMOItems dont l'id se termine par ce chemin ("ruby" -> "nexo:ruby"),
+	 * serveur courant d'abord : sert a retrouver l'id interne d'un id ecrit avec le prefixe du serveur.
+	 */
+	public Entry findPluginItemByPath(String path) {
+		String key = currentServerKey();
+		if (key != null) {
+			Entry entry = findPluginItemByPath(servers.get(key), path);
+			if (entry != null) {
+				return entry;
+			}
+		}
+		for (Map<String, Entry> items : servers.values()) {
+			Entry entry = findPluginItemByPath(items, path);
+			if (entry != null) {
+				return entry;
+			}
+		}
+		return null;
+	}
+
+	private static Entry findPluginItemByPath(Map<String, Entry> items, String path) {
+		if (items == null) {
+			return null;
+		}
+		for (Entry entry : items.values()) {
+			if (com.eldrazy.itemlists.identity.IdPrefixes.isPluginPrefixed(entry.id) && ItemIds.path(entry.id).equals(path)) {
+				return entry;
+			}
+		}
+		return null;
+	}
+
 	public boolean isKnownOnCurrentServer(String id) {
 		String key = currentServerKey();
 		Map<String, Entry> items = key == null ? null : servers.get(key);

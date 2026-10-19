@@ -55,7 +55,9 @@ public class ItemListsClient implements ClientModInitializer {
 		customItems = new CustomItemCache(ModPaths.CUSTOM_ITEMS_CACHE);
 		customItems.load();
 		// Nettoyage des icones de menus et des entrees non verifiees (garde ce qui est dans une liste).
-		int purged = customItems.purge(lists::usesItem, config.discoverInMenus);
+		int purged = customItems.purge(id -> lists.usesItem(id)
+				|| (com.eldrazy.itemlists.identity.IdPrefixes.isPluginPrefixed(id) && lists.usesItemPath(com.eldrazy.itemlists.data.ItemIds.path(id))),
+				config.discoverInMenus);
 		if (purged > 0) {
 			LOGGER.info("{} entree(s) peu fiable(s) retiree(s) du cache des items custom.", purged);
 		}

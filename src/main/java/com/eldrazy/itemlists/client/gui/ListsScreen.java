@@ -9,6 +9,7 @@ import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
@@ -19,6 +20,8 @@ import net.minecraft.util.Util;
 
 import com.eldrazy.itemlists.ItemListsClient;
 import com.eldrazy.itemlists.client.EntryRows;
+import com.eldrazy.itemlists.client.IdConversion;
+import com.eldrazy.itemlists.client.ServerPrefix;
 import com.eldrazy.itemlists.config.ModPaths;
 import com.eldrazy.itemlists.data.ItemList;
 import com.eldrazy.itemlists.data.ListEntry;
@@ -51,6 +54,8 @@ public class ListsScreen extends BaseScreen {
 	private Button renameButton;
 	private Button duplicateButton;
 	private Button deleteButton;
+	private Button prefixModeButton;
+	private Button prefixEditButton;
 	private Button catalogButton;
 	private Button exportJsonButton;
 	private Button exportCsvButton;
@@ -101,11 +106,11 @@ public class ListsScreen extends BaseScreen {
 		rightWidth = this.width - rightX - MARGIN;
 		int bottomButtonsY = this.height - MARGIN - BUTTON_HEIGHT;
 		int contentBottom = bottomButtonsY - 14;
-		listsBottom = contentBottom - 2 * BUTTON_HEIGHT - 2 * GAP;
+		listsBottom = contentBottom - 3 * BUTTON_HEIGHT - 3 * GAP;
 		rowsTop = TOP + HEADER_HEIGHT;
 		rowsBottom = contentBottom;
 
-		// Boutons de gestion des listes, sous la colonne de gauche (2 x 2).
+		// Boutons de gestion des listes, sous la colonne de gauche (2 x 2), puis les prefixes des ids.
 		int half = (leftWidth - GAP) / 2;
 		int y1 = listsBottom + GAP;
 		int y2 = y1 + BUTTON_HEIGHT + GAP;
@@ -117,6 +122,11 @@ public class ListsScreen extends BaseScreen {
 				.bounds(leftX, y2, half, BUTTON_HEIGHT).build());
 		deleteButton = this.addRenderableWidget(Button.builder(Component.translatable("gui.itemlists.lists.delete"), b -> confirmDelete())
 				.bounds(leftX + half + GAP, y2, half, BUTTON_HEIGHT).build());
+		int y3 = y2 + BUTTON_HEIGHT + GAP;
+		prefixModeButton = this.addRenderableWidget(Button.builder(Component.empty(), b -> togglePrefixMode())
+				.bounds(leftX, y3, half, BUTTON_HEIGHT).build());
+		prefixEditButton = this.addRenderableWidget(Button.builder(Component.empty(), b -> promptPrefix())
+				.bounds(leftX + half + GAP, y3, half, BUTTON_HEIGHT).build());
 
 		// En-tete de droite : recherche, tri, liste active.
 		int smallButton = Math.min(96, Math.max(60, rightWidth / 5));
@@ -175,6 +185,59 @@ public class ListsScreen extends BaseScreen {
 		boolean isActive = has && list.id().equals(manager().activeId());
 		activeButton.setMessage(Component.translatable(isActive ? "gui.itemlists.lists.is_active" : "gui.itemlists.lists.set_active"));
 		sortButton.setMessage(sort.label());
+
+		// Prefixes des ids Nexo / MythicMobs... : prefixe du serveur ou prefixes des plugins.
+		String prefix = ServerPrefix.current();
+		boolean serverMode = ItemListsClient.getInstance().config().useServerPrefix;
+		prefixModeButton.setMessage(Component.translatable(serverMode ? "gui.itemlists.lists.prefix_mode.server" : "gui.itemlists.lists.prefix_mode.plugins"));
+		prefixModeButton.active = prefix != null;
+		String tooltipKey = prefix == null ? "gui.itemlists.lists.prefix_mode.offline"
+				: serverMode ? "gui.itemlists.lists.prefix_mode.server.tooltip" : "gui.itemlists.lists.prefix_mode.plugins.tooltip";
+		prefixModeButton.setTooltip(Tooltip.create(Component.translatable(tooltipKey, prefix == null ? "" : prefix)));
+		prefixEditButton.setMessage(Component.translatable("gui.itemlists.lists.prefix", prefix == null ? "-" : prefix));
+		prefixEditButton.active = prefix != null;
+		prefixEditButton.setTooltip(Tooltip.create(Component.translatable("gui.itemlists.lists.prefix.tooltip")));
+	}
+
+	/** Bascule prefixe du serveur / prefixes des plugins et convertit toutes les listes. */
+	private void togglePrefixMode() {
+		ItemListsClient client = ItemListsClient.getInstance();
+		boolean toServer = !client.config().useServerPrefix;
+		IdConversion.Result result = IdConversion.convertAll(toServer);
+		if (result == null) {
+			return;
+		}
+		client.config().useServerPrefix = toServer;
+		client.saveConfig();
+		if (result.unresolved() > 0) {
+			showStatus(Component.translatable("gui.itemlists.lists.prefix_converted_partial", result.converted(), result.unresolved()), Theme.COLOR_PARTIAL);
+		} else {
+			showStatus(Component.translatable("gui.itemlists.lists.prefix_converted", result.converted()));
+		}
+	}
+
+	/** Change le prefixe du serveur courant ; en mode "serveur", les listes passent au nouveau prefixe. */
+	private void promptPrefix() {
+		String current = ServerPrefix.current();
+		if (current == null) {
+			return;
+		}
+		this.minecraft.gui.setScreen(new TextPromptScreen(this, Component.translatable("gui.itemlists.lists.prefix_title"), current, value -> {
+			boolean serverMode = ItemListsClient.getInstance().config().useServerPrefix;
+			// On repasse par les ids des plugins pour pouvoir reecrire les listes avec le nouveau prefixe.
+			if (serverMode) {
+				IdConversion.convertAll(false);
+			}
+			boolean changed = ServerPrefix.setCurrent(value);
+			if (serverMode) {
+				IdConversion.convertAll(true);
+			}
+			if (changed) {
+				showStatus(Component.translatable("gui.itemlists.lists.prefix_changed", ServerPrefix.current()));
+			} else {
+				showError(Component.translatable("gui.itemlists.lists.prefix_invalid"));
+			}
+		}));
 	}
 
 	@Override

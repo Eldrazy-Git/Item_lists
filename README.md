@@ -30,8 +30,9 @@ Nouveautés de chaque version : [CHANGELOG.md](CHANGELOG.md).
 - Quantités : clic sur le nombre pour le saisir, molette ±1 (Maj ±64, Ctrl ±10). `×` en fin de ligne pour retirer.
 - Recherche (nom, id, `@namespace`), tri (ordre, nom, progression, manquants, quantité).
 - Import / export JSON et CSV, réglages.
+- **Ids : serveur / plugins** : forme des identifiants des items Nexo, Oraxen, MythicMobs et MMOItems dans les listes (voir [Préfixe du serveur](#préfixe-du-serveur)) ; **Préfixe : …** pour le modifier.
 
-![Menu des listes](docs/images/menu-listes-v4.png)
+![Menu des listes](docs/images/menu-listes-v5.png)
 
 ### Catalogue (« Ajouter… »)
 - Tous les items vanilla, dont **chaque variante** de potion, potion jetable / persistante et flèche à effet, et **chaque livre enchanté à tous ses niveaux** (Tranchant I à V…, enchantements du serveur compris).
@@ -92,6 +93,20 @@ Les items custom sont des items vanilla portant des data components. Des **extra
 - Le **comptage** compare ces identités : un rubis Nexo n'est pas compté comme du papier, un diamant renommé à l'enclume reste un diamant, et une potion de soin n'est pas comptée comme une potion de poison.
 - Les blocs custom (note blocks, tripwire, champignons…) sont gérés via leur forme item.
 - Le client ne connaît pas le registre des plugins : chaque item de plugin d'items vu dans l'**inventaire** ou un **vrai coffre** est mémorisé, **par adresse de serveur**, dans `config/itemlists/custom_items_cache.json`, avec un exemplaire complet de l'item pour afficher son vrai modèle. Les **icônes des menus de plugins** (Retour, Fermer, récompenses…), même quand ce sont des items Nexo, sont ignorées. Option *Découvrir aussi dans les menus* pour `/nexo inventory`.
+
+### Préfixe du serveur
+
+Nexo, Oraxen, MythicMobs et MMOItems n'ont pas de namespace propre : le mod ajoute le nom du plugin (`nexo:ruby`, `mythicmobs:elytreum_sword`). Par défaut, **ce préfixe est remplacé par celui du serveur** :
+
+| | Ids : serveur (défaut) | Ids : plugins |
+|---|---|---|
+| Item Nexo | `la_citadelle:etherium_shard` | `nexo:etherium_shard` |
+| Item MythicMobs | `la_citadelle:elytreum_sword` | `mythicmobs:elytreum_sword` |
+| Item ItemsAdder, vanilla | inchangé (`monpack:ruby`, `minecraft:diamond`) | inchangé |
+
+- Le préfixe par défaut vient du nom du serveur dans votre liste de serveurs (« La Citadelle » → `la_citadelle`, `solo` en solo). Le bouton **Préfixe : …** du menu des listes le modifie pour le serveur courant (ex. `citadelle`).
+- L'interrupteur **Ids : serveur / plugins** du menu des listes convertit **toutes les listes** d'une forme à l'autre (à faire connecté au serveur : le retour aux préfixes des plugins s'appuie sur les items déjà vus pour savoir si `la_citadelle:ruby` est un item Nexo ou MythicMobs).
+- Le comptage reconnaît les deux formes : une liste écrite avec l'une ou l'autre compte les mêmes items.
 
 > ⚠️ Les clés ci-dessus correspondent aux versions publiques des plugins. **Vérifiez-les sur vos vrais items** avec `/itemlists dump` (item en main) ou `/itemlists dump inventory` : la commande affiche l'identité reconnue, l'extracteur utilisé et écrit tous les composants dans `config/itemlists/dumps/`. Si un plugin range son id ailleurs, un nouvel extracteur s'ajoute en une ligne dans `IdentityRegistry`.
 

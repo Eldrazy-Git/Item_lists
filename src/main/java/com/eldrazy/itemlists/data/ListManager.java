@@ -200,6 +200,18 @@ public final class ListManager {
 		return sorted;
 	}
 
+	/** Vrai si une liste contient un item dont l'id se termine par ce chemin (quel que soit son prefixe). */
+	public boolean usesItemPath(String path) {
+		for (ItemList list : lists.values()) {
+			for (ListEntry entry : list.entries()) {
+				if (ItemIds.path(entry.item()).equals(path)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	/** Vrai si au moins une liste contient cet identifiant d'item. */
 	public boolean usesItem(String itemId) {
 		for (ItemList list : lists.values()) {

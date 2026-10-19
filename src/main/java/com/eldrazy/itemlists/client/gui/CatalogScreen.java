@@ -194,7 +194,7 @@ public class CatalogScreen extends BaseScreen {
 				CatalogData.Entry entry = filtered.get(index);
 				int x = gridX + c * CELL;
 				int y = gridY + 2 + r * CELL;
-				ListEntry inList = list.find(entry.id());
+				ListEntry inList = com.eldrazy.itemlists.client.ServerPrefix.find(list, entry.id());
 				if (inList != null) {
 					graphics.fill(x, y, x + CELL, y + CELL, 0x306FCF97);
 					Theme.outline(graphics, x, y, CELL, CELL, Theme.COLOR_COMPLETE);
@@ -231,7 +231,7 @@ public class CatalogScreen extends BaseScreen {
 			List<Component> lines = new ArrayList<>(Screen.getTooltipFromItem(this.minecraft, hovered.stack()));
 			lines.add(Component.literal(hovered.id()).withStyle(ChatFormatting.DARK_GRAY));
 			lines.add(Component.translatable(hovered.source().translationKey()).withStyle(ChatFormatting.BLUE));
-			ListEntry inList = list.find(hovered.id());
+			ListEntry inList = com.eldrazy.itemlists.client.ServerPrefix.find(list, hovered.id());
 			if (inList != null) {
 				lines.add(Component.translatable("gui.itemlists.catalog.in_list", Theme.formatCount(inList.target())).withStyle(ChatFormatting.GREEN));
 			}

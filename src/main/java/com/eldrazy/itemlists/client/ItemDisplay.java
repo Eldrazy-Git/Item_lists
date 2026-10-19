@@ -70,11 +70,17 @@ public final class ItemDisplay {
 	}
 
 	public static ItemSource sourceOf(String id) {
-		return ItemListsClient.getInstance().customItems().sourceOf(id);
+		String canonical = ServerPrefix.canonical(id);
+		return ItemListsClient.getInstance().customItems().sourceOf(canonical != null ? canonical : id);
 	}
 
 	private static ItemStack resolve(String id, CustomItemCache cache) {
 		CustomItemCache.Entry entry = cache.find(id);
+		if (entry == null) {
+			// "citadelle:ruby" (prefixe du serveur) -> l'item "nexo:ruby" memorise.
+			String canonical = ServerPrefix.canonical(id);
+			entry = canonical == null ? null : cache.find(canonical);
+		}
 		if (entry != null) {
 			// Item custom connu : son exemplaire memorise, ou le repli "papier + nom" s'il est indecodable.
 			return entry.stack();

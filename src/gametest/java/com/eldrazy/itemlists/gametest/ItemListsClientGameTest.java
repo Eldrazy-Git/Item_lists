@@ -83,6 +83,7 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 			testCounting(context);
 			testMenuVersusChest(context, world);
 			testVanillaVariants(context, world);
+			testServerPrefix(context, world);
 			takeScreenshots(context, "");
 			switchLanguage(context, "fr_fr");
 			takeScreenshots(context, "_fr");
@@ -247,6 +248,54 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 		}
 		expect(catalog.contains("minecraft:potion[minecraft:strong_healing]"), true);
 		expect(catalog.contains("minecraft:tipped_arrow[minecraft:long_swiftness]"), true);
+		world.getServer().runCommand("clear ItemListsDev");
+		context.waitTicks(5);
+	}
+
+	/**
+	 * Prefixe du serveur (active par defaut) : un item Nexo est ecrit "solo:ruby" (solo) au lieu de "nexo:ruby",
+	 * compte sous les deux formes, et l'interrupteur convertit les listes dans les deux sens.
+	 */
+	private static void testServerPrefix(ClientGameTestContext context, TestSingleplayerContext world) {
+		give(world, NEXO_RUBY, 5);
+		context.waitTicks(10);
+		ItemList list = context.computeOnClient(mc -> {
+			ItemList created = ItemListsClient.getInstance().lists().create("Prefixes");
+			com.eldrazy.itemlists.client.ListActions.add(created, "nexo:ruby", "Rubis", 9);
+			return created;
+		});
+		expect(context.computeOnClient(mc -> com.eldrazy.itemlists.client.ServerPrefix.current()), "solo");
+		expect(context.computeOnClient(mc -> list.entries().get(0).item()), "solo:ruby");
+		expect(context.computeOnClient(mc -> ItemListsClient.getInstance().tracker().count("solo:ruby")), 5L);
+		expect(context.computeOnClient(mc -> ItemListsClient.getInstance().tracker().count("nexo:ruby")), 5L);
+		// Ajouter le meme item ne cree pas de doublon sous l'autre forme.
+		context.runOnClient(mc -> com.eldrazy.itemlists.client.ListActions.add(list, "nexo:ruby", "Rubis", 1));
+		expect(context.computeOnClient(mc -> list.entries().size() + ":" + list.entries().get(0).target()), "1:10");
+		// L'icone est retrouvee depuis la forme "serveur".
+		expect(context.computeOnClient(mc -> IdentityRegistry.identify(com.eldrazy.itemlists.client.ItemDisplay.stackFor("solo:ruby")).id()), "nexo:ruby");
+
+		// Interrupteur : prefixes des plugins, puis retour au prefixe du serveur.
+		expect(context.computeOnClient(mc -> com.eldrazy.itemlists.client.IdConversion.convertAll(false).converted() >= 1), true);
+		expect(context.computeOnClient(mc -> list.entries().get(0).item()), "nexo:ruby");
+		// Toutes les listes sont converties (la liste principale contient aussi nexo:ruby et oraxen:gem).
+		expect(context.computeOnClient(mc -> com.eldrazy.itemlists.client.IdConversion.convertAll(true).converted() >= 3), true);
+		expect(context.computeOnClient(mc -> list.entries().get(0).item()), "solo:ruby");
+
+		// Prefixe personnalise : les listes suivent.
+		context.runOnClient(mc -> {
+			com.eldrazy.itemlists.client.IdConversion.convertAll(false);
+			com.eldrazy.itemlists.client.ServerPrefix.setCurrent("La Citadelle");
+			com.eldrazy.itemlists.client.IdConversion.convertAll(true);
+			ItemListsClient.getInstance().tracker().forceRecount();
+		});
+		context.waitTicks(3);
+		expect(context.computeOnClient(mc -> list.entries().get(0).item()), "la_citadelle:ruby");
+		expect(context.computeOnClient(mc -> ItemListsClient.getInstance().tracker().count("la_citadelle:ruby")), 5L);
+
+		context.runOnClient(mc -> {
+			ItemListsClient.getInstance().lists().delete(list);
+			ItemListsClient.getInstance().config().serverPrefixes.clear();
+		});
 		world.getServer().runCommand("clear ItemListsDev");
 		context.waitTicks(5);
 	}

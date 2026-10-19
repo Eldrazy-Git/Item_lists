@@ -144,8 +144,27 @@ public final class InventoryTracker {
 				RecursiveCounter.count(List.of(item));
 			}
 		}
+		addServerPrefixAliases(totals);
 		counts = totals;
 		revision++;
+	}
+
+	/**
+	 * Les listes peuvent ecrire un item Nexo "nexo:ruby" ou "citadelle:ruby" (prefixe du serveur) :
+	 * les quantites sont aussi rangees sous la seconde forme pour que les deux soient comptees.
+	 */
+	private static void addServerPrefixAliases(Map<String, Long> totals) {
+		String prefix = com.eldrazy.itemlists.client.ServerPrefix.current();
+		if (prefix == null) {
+			return;
+		}
+		Map<String, Long> aliases = new java.util.HashMap<>();
+		for (Map.Entry<String, Long> entry : totals.entrySet()) {
+			if (com.eldrazy.itemlists.identity.IdPrefixes.isPluginPrefixed(entry.getKey())) {
+				aliases.merge(com.eldrazy.itemlists.identity.IdPrefixes.toServer(entry.getKey(), prefix), entry.getValue(), Long::sum);
+			}
+		}
+		aliases.forEach((id, count) -> totals.merge(id, count, Long::sum));
 	}
 
 	private static void discover(CustomItemCache cache, McCountableItem item, String origin) {

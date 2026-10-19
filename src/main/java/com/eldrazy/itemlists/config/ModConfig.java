@@ -38,6 +38,15 @@ public class ModConfig {
 	 */
 	public boolean discoverInMenus = false;
 
+	/**
+	 * Ecrire les items Nexo / Oraxen / MythicMobs / MMOItems avec le prefixe du serveur ("citadelle:ruby")
+	 * plutot que celui du plugin ("nexo:ruby"). Les namespaces reels (ItemsAdder, minecraft...) ne changent pas.
+	 */
+	public boolean useServerPrefix = true;
+
+	/** Prefixe personnalise par serveur (cle : adresse du serveur, "singleplayer" en solo). */
+	public java.util.Map<String, String> serverPrefixes = new java.util.LinkedHashMap<>();
+
 	public HudConfig hud = new HudConfig();
 
 	public void clamp() {
@@ -45,6 +54,9 @@ public class ModConfig {
 			hud = new HudConfig();
 		}
 		hud.clamp();
+		if (serverPrefixes == null) {
+			serverPrefixes = new java.util.LinkedHashMap<>();
+		}
 		if (sidePanelSide == null) {
 			sidePanelSide = PanelSide.AUTO;
 		}

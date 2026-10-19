@@ -30,9 +30,10 @@ public final class ListActions {
 
 	/** Variante par identifiant deja connu (catalogue) : pas de re-identification du stack d'icone. */
 	public static ListEntry add(ItemList list, String id, String label, int amount) {
-		ListEntry entry = list.find(id);
+		// L'item est peut-etre deja dans la liste sous l'autre forme ("nexo:ruby" / "citadelle:ruby").
+		ListEntry entry = ServerPrefix.find(list, id);
 		if (entry == null) {
-			entry = new ListEntry(id, label, Math.max(1, amount));
+			entry = new ListEntry(ServerPrefix.preferred(id), label, Math.max(1, amount));
 			list.entries().add(entry);
 		} else {
 			entry.setTarget((int) Math.min(Integer.MAX_VALUE, (long) entry.target() + amount));
@@ -43,7 +44,7 @@ public final class ListActions {
 
 	/** Retire l'item de la liste ; renvoie false s'il n'y etait pas. */
 	public static boolean remove(ItemList list, String id) {
-		ListEntry entry = list.find(id);
+		ListEntry entry = ServerPrefix.find(list, id);
 		if (entry == null) {
 			return false;
 		}

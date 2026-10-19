@@ -2,6 +2,17 @@
 
 Toutes les évolutions notables d'Item Lists sont listées ici.
 
+## [Non publié]
+
+### Ajouté
+- **Préfixe du serveur pour les items Nexo, Oraxen, MythicMobs et MMOItems** (activé par défaut) : dans les listes et les exports, ces items sont écrits avec le préfixe du serveur (`la_citadelle:elytreum_sword`) au lieu de celui du plugin (`mythicmobs:elytreum_sword`). Les namespaces réels (ItemsAdder, `minecraft:`) ne changent pas.
+  - Préfixe par défaut tiré du nom du serveur dans la liste des serveurs (`solo` en solo), modifiable avec le bouton **Préfixe : …** du menu des listes.
+  - Interrupteur **Ids : serveur / plugins** dans le menu des listes : convertit toutes les listes d'une forme à l'autre.
+  - Le comptage reconnaît les deux formes.
+
+### À faire après la mise à jour
+- Les listes existantes gardent leurs ids `nexo:` / `mythicmobs:` (ils restent comptés). Pour les passer au préfixe du serveur, connectez-vous au serveur et cliquez deux fois sur **Ids : serveur** dans le menu des listes (repasser en « plugins » puis revenir en « serveur »).
+
 ## [1.1.0] - 2026-10-19
 
 ### Ajouté
