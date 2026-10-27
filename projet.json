@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "nom": "Item_List",
+  "description": "Mod **Fabric 26.2**, **100 % client**, pour créer et suivre des listes d'items (objectifs de farm, projets de construction, recettes de plugins…), compatible avec les items custom de **Nexo**, **Items",
+  "type": "java",
+  "categorie": "Minecraft",
+  "tags": [],
+  "favori": false,
+  "point_entree": "build.gradle",
+  "ouvrir_avec": "vscode",
+  "actions": [
+    {
+      "nom": "Compiler",
+      "description": "Lance « gradlew build » et ouvre le dossier contenant le .jar.",
+      "commande": "gradlew build",
+      "parametres": [],
+      "ouvrir_dossier_apres": "build/libs"
+    }
+  ],
+  "outils_lies": []
+}

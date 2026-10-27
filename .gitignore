@@ -41,3 +41,10 @@ replay_*.log
 
 # logs du client de dev
 logs/
+
+# Ajouté par Toolkit : fichiers sensibles à ne jamais versionner
+.env
+.env.*
+*.jks
+*.keystore
+local.properties
