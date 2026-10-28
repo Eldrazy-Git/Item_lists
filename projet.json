@@ -3,8 +3,8 @@
   "nom": "Item_List",
   "description": "Mod **Fabric 26.2**, **100 % client**, pour créer et suivre des listes d'items (objectifs de farm, projets de construction, recettes de plugins…), compatible avec les items custom de **Nexo**, **Items",
   "type": "java",
-  "categorie": "Minecraft",
-  "tags": [],
+  "categorie": "Minecraft mods",
+  "tags": ["Mods", "Minecraft"],
   "favori": false,
   "point_entree": "build.gradle",
   "ouvrir_avec": "vscode",
@@ -17,5 +17,6 @@
       "ouvrir_dossier_apres": "build/libs"
     }
   ],
-  "outils_lies": []
+  "outils_lies": [],
+  "icone": "src/main/resources/assets/itemlists/icon.png"
 }
