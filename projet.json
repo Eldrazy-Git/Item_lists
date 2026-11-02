@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "nom": "Item_List",
-  "description": "Mod **Fabric 26.2**, **100 % client**, pour créer et suivre des listes d'items (objectifs de farm, projets de construction, recettes de plugins…), compatible avec les items custom de **Nexo**, **Items",
+  "description": "Mod Fabric 26.2, 100 % client, pour créer et suivre des listes d'items (objectifs de farm, projets de construction, recettes de plugins…). Il reconnaît aussi les items custom de Nexo, ItemsAdder, Oraxen, MythicMobs et MMOItems.",
   "type": "java",
   "categorie": "Minecraft mods",
   "tags": ["Mods", "Minecraft"],
