@@ -15,6 +15,12 @@
       "commande": "gradlew build",
       "parametres": [],
       "ouvrir_dossier_apres": "build/libs"
+    },
+    {
+      "nom": "Tester en jeu",
+      "description": "Lance Minecraft avec le mod pour l'essayer.",
+      "commande": "gradlew runClient",
+      "parametres": []
     }
   ],
   "outils_lies": [],
