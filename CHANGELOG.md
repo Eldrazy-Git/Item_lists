@@ -2,6 +2,14 @@
 
 Toutes les évolutions notables d'Item Lists sont listées ici.
 
+## [1.3.0] - 2026-11-23
+
+### Modifié
+- **Passage à Minecraft 26.3** (Fabric Loader ≥ 0.20.1, Fabric API 0.167.0, Java 25). Cette version ne fonctionne plus en 26.2.
+- Compatibilité REI 26.3.824 et JEI 31.23.0.129.
+- Minecraft 26.3 gère le clavier et la souris avec SDL au lieu de GLFW : touches et boutons de souris adaptés (saisie des quantités, Entrée, Échap, Suppr, Page haut / bas, clic droit du catalogue…).
+- Le sélecteur de fichier de l'import utilise maintenant celui de SDL (l'ancien, tinyfd, n'est plus livré avec le jeu).
+
 ## [1.2.0] - 2026-10-19
 
 ### Ajouté

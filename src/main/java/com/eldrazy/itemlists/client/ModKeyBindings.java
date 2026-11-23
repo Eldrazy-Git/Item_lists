@@ -1,6 +1,5 @@
 package com.eldrazy.itemlists.client;
 
-import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.platform.InputConstants;
 
@@ -38,15 +37,15 @@ public final class ModKeyBindings {
 
 	public static void register() {
 		openLists = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-				"key.itemlists.open_lists", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Y, CATEGORY));
+				"key.itemlists.open_lists", InputConstants.Type.KEYBOARD, InputConstants.KEY_Y, CATEGORY));
 		toggleHud = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-				"key.itemlists.toggle_hud", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, CATEGORY));
+				"key.itemlists.toggle_hud", InputConstants.Type.KEYBOARD, InputConstants.KEY_H, CATEGORY));
 		editHud = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-				"key.itemlists.edit_hud", InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), CATEGORY));
+				"key.itemlists.edit_hud", InputConstants.Type.KEYBOARD, InputConstants.UNKNOWN.getValue(), CATEGORY));
 		addHovered = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-				"key.itemlists.add_hovered", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_N, CATEGORY));
+				"key.itemlists.add_hovered", InputConstants.Type.KEYBOARD, InputConstants.KEY_N, CATEGORY));
 		toggleSidePanel = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-				"key.itemlists.toggle_side_panel", InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), CATEGORY));
+				"key.itemlists.toggle_side_panel", InputConstants.Type.KEYBOARD, InputConstants.UNKNOWN.getValue(), CATEGORY));
 
 		ClientTickEvents.END_CLIENT_TICK.register(ModKeyBindings::handleTick);
 	}

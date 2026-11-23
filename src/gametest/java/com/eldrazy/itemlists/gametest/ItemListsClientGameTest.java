@@ -485,13 +485,13 @@ public class ItemListsClientGameTest implements FabricClientGameTest {
 
 		context.getInput().setCursorPos(cell[0], cell[1]);
 		context.waitTicks(2);
-		context.getInput().pressMouse(org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT);
-		context.getInput().pressKey(org.lwjgl.glfw.GLFW.GLFW_KEY_2);
-		context.getInput().pressKey(org.lwjgl.glfw.GLFW.GLFW_KEY_5);
-		context.getInput().pressKey(org.lwjgl.glfw.GLFW.GLFW_KEY_0);
+		context.getInput().pressMouse(com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT);
+		context.getInput().pressKey(com.mojang.blaze3d.platform.InputConstants.KEY_2);
+		context.getInput().pressKey(com.mojang.blaze3d.platform.InputConstants.KEY_5);
+		context.getInput().pressKey(com.mojang.blaze3d.platform.InputConstants.KEY_0);
 		context.waitTicks(2);
 		context.takeScreenshot("showcase_panel_editing");
-		context.getInput().pressKey(org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER);
+		context.getInput().pressKey(com.mojang.blaze3d.platform.InputConstants.KEY_RETURN);
 		context.waitTicks(2);
 		expect(context.computeOnClient(mc -> active.entries().get(0).target()), 250);
 		// Les chiffres ne doivent pas avoir ferme l'inventaire ni ete pris pour un echange avec la hotbar.

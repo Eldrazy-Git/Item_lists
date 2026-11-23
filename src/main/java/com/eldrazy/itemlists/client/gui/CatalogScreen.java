@@ -3,7 +3,7 @@ package com.eldrazy.itemlists.client.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -249,7 +249,7 @@ public class CatalogScreen extends BaseScreen {
 			return false;
 		}
 		CatalogData.Entry entry = filtered.get(index);
-		if (event.button() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+		if (event.button() == InputConstants.MOUSE_BUTTON_RIGHT) {
 			if (ListActions.remove(list, entry.id())) {
 				showStatus(Component.translatable("gui.itemlists.catalog.removed", entry.name()), Theme.COLOR_PARTIAL);
 			}
@@ -270,7 +270,7 @@ public class CatalogScreen extends BaseScreen {
 	@Override
 	public boolean keyPressed(KeyEvent event) {
 		// Suppr sur un item custom survole : l'oublier (retire un intrus du catalogue, ex. bouton de menu).
-		if (event.key() == GLFW.GLFW_KEY_DELETE && this.getFocused() != searchBox) {
+		if (event.key() == InputConstants.KEY_DELETE && this.getFocused() != searchBox) {
 			double mx = this.minecraft.mouseHandler.getScaledXPos(this.minecraft.getWindow());
 			double my = this.minecraft.mouseHandler.getScaledYPos(this.minecraft.getWindow());
 			int index = indexAt(mx, my);
@@ -282,11 +282,11 @@ public class CatalogScreen extends BaseScreen {
 				return true;
 			}
 		}
-		if (event.key() == GLFW.GLFW_KEY_PAGE_DOWN) {
+		if (event.key() == InputConstants.KEY_PAGEDOWN) {
 			scrollRow = Math.min(maxScroll(), scrollRow + visibleRows);
 			return true;
 		}
-		if (event.key() == GLFW.GLFW_KEY_PAGE_UP) {
+		if (event.key() == InputConstants.KEY_PAGEUP) {
 			scrollRow = Math.max(0, scrollRow - visibleRows);
 			return true;
 		}

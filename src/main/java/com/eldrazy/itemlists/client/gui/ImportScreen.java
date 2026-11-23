@@ -12,7 +12,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Util;
+import com.mojang.blaze3d.Blaze3D;
 
 import com.eldrazy.itemlists.ItemListsClient;
 import com.eldrazy.itemlists.client.FileDialogs;
@@ -81,7 +81,7 @@ public class ImportScreen extends BaseScreen {
 		} catch (IOException e) {
 			ItemListsClient.LOGGER.warn("Impossible de creer {}", ModPaths.IMPORT, e);
 		}
-		Util.getPlatform().openPath(ModPaths.IMPORT);
+		Blaze3D.openPath(ModPaths.IMPORT);
 	}
 
 	private void chooseFile() {

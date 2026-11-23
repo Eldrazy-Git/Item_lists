@@ -17,7 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.SnbtPrinterTagVisitor;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -92,7 +92,7 @@ public final class ItemListsCommand {
 				Component.literal(identity.extractor()).withStyle(ChatFormatting.GRAY)));
 
 		CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-		String customText = customData == null ? "-" : NbtUtils.prettyPrint(customData.copyTag(), false).replaceAll("\\s+", " ");
+		String customText = customData == null ? "-" : new SnbtPrinterTagVisitor().visit(customData.copyTag()).replaceAll("\\s+", " ");
 		source.sendFeedback(Component.translatable("itemlists.dump.custom_data",
 				Component.literal(shorten(customText)).withStyle(ChatFormatting.GRAY)));
 
@@ -138,7 +138,7 @@ public final class ItemListsCommand {
 		if (minecraft.level != null) {
 			var ops = minecraft.level.registryAccess().createSerializationContext(NbtOps.INSTANCE);
 			Tag tag = DataComponentPatch.CODEC.encodeStart(ops, patch).result().orElse(null);
-			lines.add(tag == null ? patch.toString() : NbtUtils.prettyPrint(tag, false));
+			lines.add(tag == null ? patch.toString() : new SnbtPrinterTagVisitor().visit(tag));
 		} else {
 			lines.add(patch.toString());
 		}

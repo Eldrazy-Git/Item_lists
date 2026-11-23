@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -16,7 +16,7 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Util;
+import com.mojang.blaze3d.Blaze3D;
 
 import com.eldrazy.itemlists.ItemListsClient;
 import com.eldrazy.itemlists.client.EntryRows;
@@ -325,7 +325,7 @@ public class ListsScreen extends BaseScreen {
 					? ExportService.exportCsv(list, ItemListsClient.getInstance().customItems()::sourceOf, ModPaths.EXPORT)
 					: ExportService.exportJson(list, ModPaths.EXPORT);
 			this.minecraft.keyboardHandler.setClipboard(file.toAbsolutePath().toString());
-			Util.getPlatform().openPath(ModPaths.EXPORT);
+			Blaze3D.openPath(ModPaths.EXPORT);
 			showStatus(Component.translatable("gui.itemlists.lists.exported", file.getFileName().toString()));
 		} catch (IOException | RuntimeException e) {
 			ItemListsClient.LOGGER.error("Echec de l'export", e);
@@ -593,7 +593,7 @@ public class ListsScreen extends BaseScreen {
 	@Override
 	public boolean keyPressed(KeyEvent event) {
 		if (editingEntry != null) {
-			if (event.key() == GLFW.GLFW_KEY_ENTER || event.key() == GLFW.GLFW_KEY_KP_ENTER) {
+			if (event.key() == InputConstants.KEY_RETURN || event.key() == InputConstants.KEY_NUMPADENTER) {
 				commitEditing();
 				return true;
 			}
@@ -602,7 +602,7 @@ public class ListsScreen extends BaseScreen {
 				return true;
 			}
 		}
-		if (event.hasControlDown() && event.key() == GLFW.GLFW_KEY_F) {
+		if (event.hasControlDown() && event.key() == InputConstants.KEY_F) {
 			this.setFocused(searchBox);
 			searchBox.setFocused(true);
 			return true;

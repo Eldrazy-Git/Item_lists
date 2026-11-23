@@ -19,15 +19,15 @@ dependencies {
 	// classes ne sont jamais chargees (seuls REI / JEI appellent nos entrypoints).
 	compileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
 	compileOnly "me.shedaniel.cloth:basic-math:0.6.1"
-	compileOnly "mezz.jei:jei-26.2-common-api:${project.jei_version}"
-	compileOnly "mezz.jei:jei-26.2-fabric-api:${project.jei_version}"
+	compileOnly "mezz.jei:jei-26.3-common-api:${project.jei_version}"
+	compileOnly "mezz.jei:jei-26.3-fabric-api:${project.jei_version}"
 
 	// Pour tester une integration en dev : ./gradlew runClient -Pviewer=rei (ou jei).
 	def viewer = project.findProperty("viewer")
 	if (viewer == "rei") {
 		localRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 	} else if (viewer == "jei") {
-		localRuntime "mezz.jei:jei-26.2-fabric:${project.jei_version}"
+		localRuntime "mezz.jei:jei-26.3-fabric:${project.jei_version}"
 	}
 
 	testImplementation platform('org.junit:junit-bom:5.13.4')

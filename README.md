@@ -1,6 +1,6 @@
 # Item Lists
 
-Mod **Fabric 26.2**, **100 % client**, pour créer et suivre des listes d'items (objectifs de farm, projets de construction, recettes de plugins…), compatible avec les items custom de **Nexo**, **ItemsAdder**, **Oraxen** (et MythicMobs / MMOItems / plugins Bukkit génériques).
+Mod **Fabric 26.3**, **100 % client**, pour créer et suivre des listes d'items (objectifs de farm, projets de construction, recettes de plugins…), compatible avec les items custom de **Nexo**, **ItemsAdder**, **Oraxen** (et MythicMobs / MMOItems / plugins Bukkit génériques).
 
 - Aucune installation côté serveur. Mis par erreur sur un serveur dédié, il est simplement ignoré (`"environment": "client"`).
 - Dépendances : Fabric Loader ≥ 0.19.5, Fabric API, Java 25.
@@ -12,7 +12,7 @@ Mod **Fabric 26.2**, **100 % client**, pour créer et suivre des listes d'items 
 
 ## Installation
 
-1. Installer Fabric Loader pour Minecraft 26.2 et Fabric API.
+1. Installer Fabric Loader pour Minecraft 26.3 et Fabric API.
 2. Télécharger `itemlists-x.y.z.jar` depuis les [releases](https://github.com/Eldrazy-Git/Item_lists/releases) et le copier dans le dossier `mods/`.
 
 Nouveautés de chaque version : [CHANGELOG.md](CHANGELOG.md).
@@ -156,10 +156,10 @@ minecraft:echo_shard;Éclat d'écho;32;vanilla
 
 ## Compatibilité REI / JEI / EMI
 
-| Mod | Version 26.2 | Intégration |
+| Mod | Version 26.3 | Intégration |
 |---|---|---|
-| REI | 26.2.821 | ✅ zones d'exclusion, panneau placé à l'opposé de sa liste, touche `N` sur l'item survolé (liste et favoris), glisser-déposer **depuis ses favoris** vers le panneau latéral |
-| JEI | 30.42.0.237 | ✅ zones d'exclusion, panneau placé à l'opposé de sa liste, touche `N` (liste et favoris), glisser-déposer depuis sa liste (ingrédient « fantôme ») |
+| REI | 26.3.824 | ✅ zones d'exclusion, panneau placé à l'opposé de sa liste, touche `N` sur l'item survolé (liste et favoris), glisser-déposer **depuis ses favoris** vers le panneau latéral |
+| JEI | 31.23.0.129 | ✅ zones d'exclusion, panneau placé à l'opposé de sa liste, touche `N` (liste et favoris), glisser-déposer depuis sa liste (ingrédient « fantôme ») |
 | EMI | **aucune version 26.x** | ❌ désactivée (EMI s'arrête à 1.21.1) |
 
 REI et JEI n'affichent leur panneau que dans les écrans de conteneur : le glisser-déposer se fait donc vers le **panneau latéral** de l'inventaire. REI ne permet pas de faire glisser les items de sa liste principale (seulement ses favoris et les écrans de recette) : utilisez la touche `N`, ou ajoutez l'item aux favoris REI (`A`) puis glissez-le.

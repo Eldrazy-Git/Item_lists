@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -171,7 +171,7 @@ public final class ContainerOverlay {
 		}
 		int index = indexAt(layout, PanelRows.rows(list).size(), event.x(), event.y());
 		List<EntryRows.Row> rows = PanelRows.rows(list);
-		if (index >= 0 && event.button() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+		if (index >= 0 && event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
 			ListEntry entry = rows.get(index).entry();
 			if (editing == null || editing.entry != entry) {
 				commitEditing();
@@ -233,14 +233,26 @@ public final class ContainerOverlay {
 
 	// ------------------------------------------------------------------ edition des quantites
 
+	/** Chiffre de la touche (rangee du haut ou pave numerique), -1 sinon. Codes SDL : 1..9 puis 0, pas dans l'ordre 0..9. */
+	private static int digitOf(int key) {
+		return switch (key) {
+			case InputConstants.KEY_0, InputConstants.KEY_NUMPAD0 -> 0;
+			case InputConstants.KEY_1, InputConstants.KEY_NUMPAD1 -> 1;
+			case InputConstants.KEY_2, InputConstants.KEY_NUMPAD2 -> 2;
+			case InputConstants.KEY_3, InputConstants.KEY_NUMPAD3 -> 3;
+			case InputConstants.KEY_4, InputConstants.KEY_NUMPAD4 -> 4;
+			case InputConstants.KEY_5, InputConstants.KEY_NUMPAD5 -> 5;
+			case InputConstants.KEY_6, InputConstants.KEY_NUMPAD6 -> 6;
+			case InputConstants.KEY_7, InputConstants.KEY_NUMPAD7 -> 7;
+			case InputConstants.KEY_8, InputConstants.KEY_NUMPAD8 -> 8;
+			case InputConstants.KEY_9, InputConstants.KEY_NUMPAD9 -> 9;
+			default -> -1;
+		};
+	}
+
 	private static void handleEditingKey(KeyEvent event) {
 		int key = event.key();
-		int digit = -1;
-		if (key >= GLFW.GLFW_KEY_0 && key <= GLFW.GLFW_KEY_9) {
-			digit = key - GLFW.GLFW_KEY_0;
-		} else if (key >= GLFW.GLFW_KEY_KP_0 && key <= GLFW.GLFW_KEY_KP_9) {
-			digit = key - GLFW.GLFW_KEY_KP_0;
-		}
+		int digit = digitOf(key);
 		if (digit >= 0) {
 			if (editing.replace) {
 				editing.buffer = "";
@@ -252,23 +264,23 @@ public final class ContainerOverlay {
 			return;
 		}
 		switch (key) {
-			case GLFW.GLFW_KEY_BACKSPACE -> {
+			case InputConstants.KEY_BACKSPACE -> {
 				editing.buffer = editing.replace || editing.buffer.isEmpty() ? "" : editing.buffer.substring(0, editing.buffer.length() - 1);
 				editing.replace = false;
 			}
-			case GLFW.GLFW_KEY_DELETE -> {
+			case InputConstants.KEY_DELETE -> {
 				editing.buffer = "";
 				editing.replace = false;
 			}
-			case GLFW.GLFW_KEY_UP, GLFW.GLFW_KEY_DOWN -> {
+			case InputConstants.KEY_UP, InputConstants.KEY_DOWN -> {
 				long value = editing.buffer.isEmpty() ? 0 : Long.parseLong(editing.buffer);
 				int step = stepFromModifiers();
-				value = Math.max(0, Math.min(Integer.MAX_VALUE, value + (key == GLFW.GLFW_KEY_UP ? step : -step)));
+				value = Math.max(0, Math.min(Integer.MAX_VALUE, value + (key == InputConstants.KEY_UP ? step : -step)));
 				editing.buffer = Long.toString(value);
 				editing.replace = false;
 			}
-			case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER, GLFW.GLFW_KEY_TAB -> commitEditing();
-			case GLFW.GLFW_KEY_ESCAPE -> editing = null;
+			case InputConstants.KEY_RETURN, InputConstants.KEY_NUMPADENTER, InputConstants.KEY_TAB -> commitEditing();
+			case InputConstants.KEY_ESCAPE -> editing = null;
 			default -> {
 			}
 		}

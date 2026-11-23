@@ -68,11 +68,11 @@ public class ItemListsJeiPlugin implements IModPlugin {
 				if (current == null) {
 					return ItemStack.EMPTY;
 				}
-				ItemStack fromList = current.getIngredientListOverlay().getIngredientUnderMouse(VanillaTypes.ITEM_STACK);
+				ItemStack fromList = current.getGuiRuntime().getIngredientListOverlay().getIngredientUnderMouse(VanillaTypes.ITEM_STACK);
 				if (fromList != null && !fromList.isEmpty()) {
 					return fromList;
 				}
-				return current.getBookmarkOverlay().getItemStackUnderMouse();
+				return current.getGuiRuntime().getBookmarkOverlay().getItemStackUnderMouse();
 			});
 		}
 	}
