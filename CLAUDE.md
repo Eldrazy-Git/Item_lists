@@ -152,5 +152,3 @@ JAVA_HOME="/c/Program Files/Eclipse Adoptium/jdk-25.0.3.9-hotspot" ./gradlew bui
   message, jamais de crash.
 - Touches par défaut (`Y`, `H`, `N`) choisies pour éviter Minecraft, chunklimitcounter (K, J, L)
   et REI/JEI (R, U, A, Ctrl+O, Ctrl+F).
-- `CHANGELOG.md` (1.3.0) indique « Fabric Loader ≥ 0.20.1 » alors que le projet est revenu à
-  0.19.5 (commit `98d5774`) : à corriger à la prochaine version.
